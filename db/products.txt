@@ -1,0 +1,9 @@
+productid;productname;authorid
+1;janSQL;1
+2;Cheetah;1
+3;PascalServer;1
+4;Painter;1
+5;Movies;1
+6;Icona;1
+7;SbookBuilder;1
+8;BackEdit;1

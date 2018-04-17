@@ -1,0 +1,5 @@
+userid;username;gender;productid;sofi;birthday
+1;Jan Verhoeven;male;1;46;1953-11-16
+2;Steyn Verhoeven;male;1;46;
+3;Lianne de Vet;;1;46;
+4;Veerle Verhoeven;;1;46;
