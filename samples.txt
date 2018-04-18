@@ -1,24 +1,23 @@
 [connect to]
-CONNECT TO '{appldir}db'
+CONNECT TO 'db'
 
 [basic select]
 SELECT * FROM users
 
 [order by]
-SELECT * FROM users ORDER BY #userid ASC, productid DESC
+SELECT * FROM users ORDER BY userid ASC, productid DESC
 
 [group by]
-SELECT products.productname AS product,count(users.userid) AS quantity FROM users,products WHERE users.productid=products.productid GROUP BY product ORDER BY product DESC
+SELECT products.productname AS product, count(users.userid) AS quantity FROM users, products WHERE users.productid=products.productid GROUP BY product ORDER BY product DESC
 
 [having]
-SELECT products.productname AS product,count(users.userid) AS quantity FROM users,products WHERE users.productid=products.productid GROUP BY product HAVING quantity>10 ORDER BY product DESC
+SELECT products.productname AS product, count(users.userid) AS quantity FROM users, products WHERE users.productid=products.productid GROUP BY product HAVING quantity>10 ORDER BY product DESC
 
 [join 2 tables]
-SELECT users.userid,users.username, products.productname FROM users,products WHERE users.productid=products.productid
+SELECT users.userid, users.username, products.productname FROM users, products WHERE users.productid=products.productid
 
 [join 2 aliased tables]
-SELECT u.userid,u.username, p.productname FROM users u,products p WHERE u.productid=p.productid
-
+SELECT u.userid, u.username, p.productname FROM users u, products p WHERE u.productid=p.productid
 
 [join 3 tables]
 SELECT users.username, products.productname, authors.authorname FROM users, products, authors WHERE (users.productid=products.productid) and products.authorid=authors.authorid)
@@ -54,7 +53,7 @@ UPDATE users SET sofi=2*sofi
 update users set userid=format(userid,'%.8d')
 
 [dateadd function]
-SELECT dateadd('m',1,birthday) AS newd, username FROM users WHERE userid=1
+SELECT dateadd('m',1,birthday) AS newdate, username FROM users WHERE userid=1
 
 [easter function]
 SELECT easter(year(date)) as easterdate, username FROM users
