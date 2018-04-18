@@ -1,11 +1,11 @@
 # janSQL
 
-JanSQL is a fast single user SQL engine for text-based files database. It's completely written in object Pascal language. Originally, it's created by Jan Verhoeven using Delphi. But then support for [Free Pascal](http://freepascal.org) compiler has been added by some contributors from the Free Pascal community. This is the latest modification done by Rene Tegel. Some unused units (from [Lazarus](http://lazarus-ide.org)' LCL or Delphi's VCL) is then removed by me, so this version can be compiled using only object Pascal's standard units.
+JanSQL is a fast single user SQL engine for text-based files database. It's completely written in object Pascal language. Originally, it's created by Jan Verhoeven using Delphi. But then support for [Free Pascal](http://freepascal.org) compiler has been added by some contributors from the Free Pascal community. This is the latest modification done by Zlatko Matić based on Rene Tegel's version. Dependency on [Lazarus](http://lazarus-ide.org)' LCL or Delphi's VCL units also had been removed, so this version can be compiled using only object Pascal's standard units.
 
 ### janSQL "database" System
 
 - *database* is a folder containing collection of text data files.
-- *table* is a semicolon-delimited text file with .txt extension.
+- *table* is a semicolon-delimited text file with .csv extension.
 - *text field* is an optionally double/single-quoted text.
 - *number field* is a numeric text with dot as decimal separator.
 
