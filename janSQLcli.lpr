@@ -59,7 +59,7 @@ begin
   if row > 0 then
     writeln('Found: ',row,' record(s) with ',col,' field(s).')
   else
-    writeln('No records found.')
+    writeln('No records found.');
 end;
 
 begin
