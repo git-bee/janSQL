@@ -40,7 +40,8 @@ unit janSQLStrings;
 interface
 
 uses
-  Classes,sysUtils;
+  {$IFDEF UNIX} clocale, cwstring,{$ENDIF}
+  Classes,SysUtils;
 
 function PosStr(const FindString, SourceString: string; StartPos: Integer = 1): Integer;
 function PosText(const FindString, SourceString: string; StartPos: Integer = 1): Integer;
@@ -61,7 +62,8 @@ function Date2WeekNo (const DT: TDateTime): Integer;
 
 implementation
 
-uses strutils;
+uses
+  StrUtils;
 
 const
   cr = chr(13)+chr(10);
@@ -102,7 +104,6 @@ const
      #$F0,#$F1,#$F2,#$F3,#$F4,#$F5,#$F6,#$F7,#$F8,#$F9,#$FA,#$FB,#$FC,#$FD,#$FE,#$FF,
      #$E0,#$E1,#$E2,#$E3,#$E4,#$E5,#$E6,#$E7,#$E8,#$E9,#$EA,#$EB,#$EC,#$ED,#$EE,#$EF,
      #$F0,#$F1,#$F2,#$F3,#$F4,#$F5,#$F6,#$F7,#$F8,#$F9,#$FA,#$FB,#$FC,#$FD,#$FE,#$FF);
-
 
 function PosStr(const FindString, SourceString: string; StartPos: Integer): Integer;
 begin
@@ -164,7 +165,7 @@ begin
 end;
 
 function Soundex(source:string) : integer;
-Const
+const
 {This table gives the SoundEX SCORE for all characters Upper and Lower Case
 hence no need to convert. This is faster than doing an UpCase on the whole input string
 The 5 NON Chars in middle are just given 0}
@@ -173,8 +174,7 @@ SoundExTable : Array[65..122] Of Byte
 =(0,1,2,3,0,1,2,0,0,2,2,4,5,5,0,1,2,6,2,3,0,1,0,2,0,2,0,0,0,0,0,0,
 //a b c d e f g h i j k l m n o p q r s t u v w x y z
   0,1,2,3,0,1,2,0,0,2,2,4,5,5,0,1,2,6,2,3,0,1,0,2,0,2);
-
-Var
+var
   i, l, s, SO, x : Byte;
   Multiple : Word;
   Name : PChar;
@@ -243,40 +243,40 @@ end;
 
 function Easter( nYear: Integer ): TDateTime;
 var
-   nMonth, nDay, nMoon, nEpact, nSunday, nGold, nCent, nCorx, nCorz: Integer;
+  nMonth, nDay, nMoon, nEpact, nSunday, nGold, nCent, nCorx, nCorz: Integer;
  begin
-    { The Golden Number of the year in the 19 year Metonic Cycle }
-    nGold := ( ( nYear mod 19 ) + 1  );
-    { Calculate the Century }
-    nCent := ( ( nYear div 100 ) + 1 );
-    { No. of Years in which leap year was dropped in order to keep in step
-      with the sun }
-    nCorx := ( ( 3 * nCent ) div 4 - 12 );
-    { Special Correction to Syncronize Easter with the moon's orbit }
-    nCorz := ( ( 8 * nCent + 5 ) div 25 - 5 );
-    { Find Sunday }
-    nSunday := ( ( 5 * nYear ) div 4 - nCorx - 10 );
-    { Set Epact (specifies occurance of full moon }
-    nEpact := ( ( 11 * nGold + 20 + nCorz - nCorx ) mod 30 );
-    if ( nEpact < 0 ) then nEpact := nEpact + 30;
-    if ( ( nEpact = 25 ) and ( nGold > 11 ) ) or ( nEpact = 24 ) then nEpact := nEpact + 1;
-    { Find Full Moon }
-    nMoon := 44 - nEpact;
-    if ( nMoon < 21 ) then nMoon := nMoon + 30;
-    { Advance to Sunday }
-    nMoon := ( nMoon + 7 - ( ( nSunday + nMoon ) mod 7 ) );
-    if ( nMoon > 31 ) then
-    begin
-      nMonth := 4;
-      nDay   := ( nMoon - 31 );
-    end
-    else
-    begin
-      nMonth := 3;
-      nDay   := nMoon;
-    end;
-    Result := EncodeDate( nYear, nMonth, nDay );
- end;
+  { The Golden Number of the year in the 19 year Metonic Cycle }
+  nGold := ( ( nYear mod 19 ) + 1  );
+  { Calculate the Century }
+  nCent := ( ( nYear div 100 ) + 1 );
+  { No. of Years in which leap year was dropped in order to keep in step
+    with the sun }
+  nCorx := ( ( 3 * nCent ) div 4 - 12 );
+  { Special Correction to Syncronize Easter with the moon's orbit }
+  nCorz := ( ( 8 * nCent + 5 ) div 25 - 5 );
+  { Find Sunday }
+  nSunday := ( ( 5 * nYear ) div 4 - nCorx - 10 );
+  { Set Epact (specifies occurance of full moon }
+  nEpact := ( ( 11 * nGold + 20 + nCorz - nCorx ) mod 30 );
+  if ( nEpact < 0 ) then nEpact := nEpact + 30;
+  if ( ( nEpact = 25 ) and ( nGold > 11 ) ) or ( nEpact = 24 ) then nEpact := nEpact + 1;
+  { Find Full Moon }
+  nMoon := 44 - nEpact;
+  if ( nMoon < 21 ) then nMoon := nMoon + 30;
+  { Advance to Sunday }
+  nMoon := ( nMoon + 7 - ( ( nSunday + nMoon ) mod 7 ) );
+  if ( nMoon > 31 ) then
+  begin
+    nMonth := 4;
+    nDay   := ( nMoon - 31 );
+  end
+  else
+  begin
+    nMonth := 3;
+    nDay   := nMoon;
+  end;
+  Result := EncodeDate( nYear, nMonth, nDay );
+end;
 
 function DateToSQLString(adate:TDateTime):string;
 var

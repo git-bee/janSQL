@@ -17,8 +17,8 @@ All Rights Reserved.
 
 Contributor(s): ___________________.
 
-Last Modified: 25-mar-2002
-Current Version: 1.1
+Last Modified: 22.01.2014
+Current Version: 1.2
 
 Notes: This is a very fast single user SQL engine for text based tables
 
@@ -38,6 +38,14 @@ History:
 //* Added RollBack method
 //* Modified "delete from" to accept "delete from <tablename>" syntax.
 
+{Change log:
+05.02.2011: By Zlatko Matić
+  *In JanSQL.Create method added: DecimalSeparator:=SysUtils.DefaultFormatSettings.DecimalSeparator added,
+  so that Jansql uses system decimal separator.
+26.12.2013: By Zlatko Matić
+  *.txt replaced with .csv, so that JanSQL now works with .csv extension instead .txt.
+}
+
 {$ifdef fpc}
    {$mode delphi} {$H+}
 {$endif}
@@ -47,7 +55,8 @@ unit janSQL;
 interface
 
 uses
-    SysUtils, Classes, janSQLStrings,janSQLExpression2,janSQLTokenizer, mwStringHashList,Variants;
+  SysUtils, Classes, Variants,
+  janSQLStrings, janSQLExpression2, janSQLTokenizer, mwStringHashList;
 
 type
   TCompareProc = procedure( Sender : TObject; i, j : Integer; var Result : Integer ) of object ;
@@ -76,6 +85,7 @@ type
     Fexpression: string;
     Fname: string;
     FFieldIndex: integer;
+
     procedure Setexpression(const Value: string);
     procedure Setname(const Value: string);
     function getValue: variant;
@@ -83,6 +93,7 @@ type
   public
     constructor create;
     destructor  destroy;override;
+
     property expression:string read Fexpression write Setexpression;
     property name:string read Fname write Setname;
     property value:variant read getValue;
@@ -101,6 +112,7 @@ type
     destructor  destroy;override;
     procedure ClearFields;
     function  AddField:TjanSQLCalcField;
+
     property FieldNames:string read getFieldNames;
     property FieldCount:integer read getFieldCount;
     property Fields[index:integer]:TjanSQLCalcField read getField;
@@ -120,6 +132,7 @@ type
     Fsum2: double;
     Fcount: integer;
     Fvalue: variant;
+
     procedure Setcount(const Value: integer);
     procedure Setsum(const Value: double);
     procedure Setsum2(const Value: double);
@@ -136,6 +149,7 @@ type
     FFields:TList;
     Fmark: boolean;
     Fcounter: integer;
+
     function getrow: string;
     procedure setrow(const Value: string);
     function getfield(index: integer): TjanSQLRecordField;
@@ -148,6 +162,7 @@ type
     destructor  destroy; override;
     procedure AddField(value:string);
     function DeleteField(index:integer):boolean;
+
     property row:string read getrow write setrow;
     property fields[index:integer]:TjanSQLRecordField read getfield;
     property mark:boolean read Fmark write Setmark;
@@ -180,6 +195,7 @@ type
     Fmatchrecord: integer;
     Falias: string;
     Fintermediate: boolean;
+
     procedure Setname(const Value: string);
     function getrecord(index: integer): TjanRecord;
     function getfieldvalue(index: variant): string;
@@ -205,6 +221,7 @@ type
     function IndexOfField(fieldname:string):integer;
     function FindFieldValue(fieldindex:integer;fieldvalue:string):integer;
     procedure Clear;
+
     property Cursor: Integer read FRecordCursor write FRecordCursor;
     property name:string read Fname write Setname;
     property alias:string read Falias write Setalias;
@@ -228,6 +245,7 @@ type
     FTokens:TList;
     FParser:TjanSQLExpression2;
     FEngine: TjanSQL;
+
     procedure SetEngine(const Value: TjanSQL);
     procedure ClearTokenList;
     function GetToken(index: integer): TToken;
@@ -236,6 +254,7 @@ type
   public
     constructor create;
     destructor  destroy;override;
+
     property Engine:TjanSQL read FEngine write SetEngine;
     property Tokens[index:integer]:TToken read GetToken;
     property Parser:TjanSQLExpression2 read getParser;
@@ -309,9 +328,11 @@ type
     { Public declarations }
     constructor create;
     destructor  destroy; override;
+
     function SQLDirect(value:string):integer;
     function ReleaseRecordset(arecordset:integer):boolean;
     function Error:string;
+
     property RecordSets[index:integer]:TjanRecordSet read getrecordset;
     property RecordSetCount:integer read getRecordSetCount;
     property NameSpace:TmwStringHashList read FNameSpace;
@@ -322,11 +343,11 @@ type
 implementation
 
 const
-  cr = chr(13)+chr(10);
+  cr = #13#10;  ////  cr = chr(13)+chr(10);
 
 var
   FError: string;
-  FDebug: string;
+  //FDebug: string;
 
 procedure err(value:string);
 begin
@@ -338,9 +359,10 @@ begin
   value:=trim(copy(value,from,maxint));
 end;
 
-// function tokeninset(token,aset:string):boolean;
-// begin
-// end;
+{soner never used
+function tokeninset(token,aset:string):boolean;
+begin
+end;}
 
 function parsetoken(const source:string;var token:string;var delimpos:integer;var delim:string):boolean;
 var
@@ -474,7 +496,7 @@ begin
     if i=0 then
       result:=alist[i]
     else
-      result:=result+';'+alist[i];
+      result := result + ';' + alist[i];
 end;
 
 { TjanSQL }
@@ -491,7 +513,11 @@ end;
 constructor TjanSQL.create;
 begin
   inherited;
-  DecimalSeparator:='.';
+  { TODO : This should be completely removed. jansql should behave
+  {        as rest of zmsql package... }
+  //Set decimal separator.
+  DecimalSeparator:='.'; //This was original value.
+  // DecimalSeparator:=SysUtils.DefaultFormatSettings.DecimalSeparator // by Z.Matić.
   FQueries:=TList.create;
   gen:=TStringList.create;
   FSQL:=TStringList.create;
@@ -571,8 +597,8 @@ var
         selectfieldfunctions[ii]:=tosqlMin;
         bAggregate:=true;
       end
-        else
-          result:=avalue;
+      else
+        result:=avalue;
     end;
   end;
 
@@ -634,11 +660,11 @@ var
     end;
   end;
 
-  procedure addresultoutputEx;
+  procedure addResultOutputEx;
   var
-    ii,cc,ir:integer;
-    ss:string;
-    v:variant;
+    ii,cc,ir: integer;
+    ss: string;
+    v: variant;
   begin
     ir:=recordsets[t3].AddRecord;
     cc:=sqloutput.FieldCount;
@@ -696,12 +722,16 @@ var
         atomalias:=copy(atom,pp+1,maxint);
         atom:=copy(atom,1,pp-1);
       end;
-      err('SELECT: can not find table '+atom);
       tii:=indexoftable(atom);
-      if tii=-1 then exit;
+      if tii=-1 then begin
+        err('SELECT: can not find table '+atom); //soner moved here
+        exit;
+      end;
       rrc:=recordsets[tii].recordcount;
-      err('SELECT: table '+atom+' has no records');
-      if rrc=0 then exit;
+      if rrc=0 then begin
+        err('SELECT: table '+atom+' has no records'); //soner moved here
+        exit;
+      end;
       recordsets[tii].alias:=atomalias;
       tables[ii].TableName:=atom;
       tables[ii].TableAlias:=atomalias;
@@ -718,49 +748,56 @@ var
   var
     ii:integer;
   begin
-    if t=tablecount-1 then begin
+    if t=tablecount-1 then
       for ii:=0 to tables[t].RecordCount-1 do begin
         tables[t].CurrentRecord:=ii;
         if matchrecordsEx then begin
            addresultoutputEx;
         end;
-      end;
     end
-    else begin
+    else
       for ii:=0 to tables[t].RecordCount-1 do begin
         tables[t].CurrentRecord:=ii;
         matchtables(t+1);
       end;
-    end;
   end;
+
 begin
+  result:=0;
   Fmatchinghaving:=false;
   bAggregate:=False; //fixed for FPC theo
-  result:=0;
+
   split(tablelist,gen);
-  err('SELECT: join table missing');
+  //soner: err('SELECT: join table missing');
   tablecount:=gen.count;
+  {soner original:
   if tablecount<2 then exit;
   if not settables then exit;
+  }
+  if (tablecount<2)or(not settables) then begin
+    err('SELECT: join table missing');
+    exit;
+  end;
 
-  err('SELECT: missing field list');
-  if selectfields='' then exit;
-  if selectfields='*' then
-    selectfields:=expandall;
+  if selectfields='' then begin
+    err('SELECT: missing field list'); //soner moved here
+    exit;
+  end;
+  if selectfields='*' then selectfields:=expandall;
 
 {new code}
-  err('SELECT dev: can not set output fields');
   if not setoutputfields then begin
     sqloutput.free;
+    err('SELECT dev: can not set output fields'); //soner moved here
     exit;
   end;
 
   // join fields are present, now join
   if resultname<>'' then begin
     // check if this is a persistent table
-    err('SELECT INTO: table '+resultname+' allready exists.');
     if InCatalog(resultname) then begin
       sqloutput.free;
+      err('SELECT INTO: table '+resultname+' allready exists.'); //soner moved here
       exit;
     end;
     // check index
@@ -808,7 +845,6 @@ begin
   FMatchrecordSet:=t3;
   Fmatchinghaving:=true;
   c3:=recordsets[t3].recordcount;
-
   // process any having clause
   if (having<>'') and (c3<>0) then begin
     query.Parser.Expression:=having;
@@ -831,9 +867,11 @@ end;
 function TjanSQL.openCatalog(value: string): integer;
 begin
   result:=0;
-  err('Catalog '+value+' does not exist');
   FInMemoryDatabase := trim(lowercase(value))=':memory:';
-  if not (FInMemoryDatabase or directoryexists(value)) then exit;
+  if not (FInMemoryDatabase or directoryexists(value)) then begin
+    err('Catalog '+value+' does not exist'); //soner moved here
+    exit;
+  end;
   FCatalog:=value;
   result:=-1;
 end;
@@ -849,15 +887,15 @@ begin
   if persistent then
     if not directoryexists(FCatalog) then exit;
   if FRecordSets.IndexOf(value)<>-1 then exit;
-  fn:=Fcatalog+PathDelim+value+'.txt';
+  {fn:=Fcatalog+PathDelim+value+'.txt';}
+  fn:=Fcatalog+PathDelim+value+'.csv'; //Changed by Zlatko Matić, 26.12.2003
   if persistent then
     if not fileexists(fn) then exit;
   rs:=TjanRecordSet.create;
   rs.name:=value;
   rs.persistent:=persistent;
   FRecordSets.AddObject(value,rs);
-  if persistent then
-    result:=rs.LoadFromFile(fn);
+  if persistent then result:=rs.LoadFromFile(fn);
 end;
 
 function TjanSQL.uniqueName: string;
@@ -1003,26 +1041,33 @@ begin
   bAggregate:=false;
   result:=0;
   t1:=IndexOfTable(tablename1);
-  err('SELECT: can not find table '+tablename1);
-  if t1=-1 then exit;
-  err('SELECT: no selected fields');
-  if selectfields='' then exit;
+
+  if t1=-1 then begin
+    err('SELECT: can not find table '+tablename1); //soner moved here
+    exit;
+  end;
+
+  if selectfields='' then begin
+    err('SELECT: no selected fields'); //soner moved here
+    exit;
+  end;
   if selectfields='*' then
     selectfields:=expandall;
-  err('SELECT: can not find selected fields');
+  //soner never used: err('SELECT: can not find selected fields');
 
 {new code}
-  err('SELECT dev: can not set output fields');
+  //soner moved: err('SELECT dev: can not set output fields');
   if not setoutputfields then begin
     sqloutput.free;
+    err('SELECT dev: can not set output fields'); //soner moved here
     exit;
   end;
 
   if resultname<>'' then begin
     // check if this is a persistent table
-    err('SELECT INTO: table '+resultname+' allready exists.');
     if InCatalog(resultname) then begin
       sqloutput.free;
+      err('SELECT INTO: table '+resultname+' allready exists.'); //soner moved here
       exit;
     end;
     // check index
@@ -1120,7 +1165,8 @@ begin
   result:=0;
   if tablename='' then exit;
   if fields='' then exit;
-  fn:=FCatalog+PathDelim+tablename+'.txt';
+  {fn:=FCatalog+PathDelim+tablename+'.txt';}
+  fn:=FCatalog+PathDelim+tablename+'.csv'; //Changed by Zlatko Matić, 26.12.2013.
   if fileexists(fn) then
   begin
     err('Table already exist');                                                    //Dak_Alpha
@@ -1137,11 +1183,17 @@ var
   idx:integer;
 begin
   result:=0;
-  err('DROP TABLE: table name missing');
-  if tablename='' then exit;
-  fn:=FCatalog+PathDelim+tablename+'.txt';
-  err('DROP TABLE: can not find file '+fn);
-  if not fileexists(fn) then exit;
+
+  if tablename='' then begin
+    err('DROP TABLE: table name missing'); //soner moved here
+    exit;
+  end;
+  {fn:=FCatalog+PathDelim+tablename+'.txt';}
+  fn:=FCatalog+PathDelim+tablename+'.csv'; //Changed by Zlatko Matić, 26.12.2013.
+  if not fileexists(fn) then begin
+    err('DROP TABLE: can not find file '+fn); //soner
+    exit;
+  end;
   deletefile(fn);
   idx:=FRecordSets.IndexOf(tablename);
   if idx<>-1 then
@@ -1152,7 +1204,6 @@ end;
 function TjanSQL.DeleteFrom(tablename1, wherecondition: string): integer;
 var
   c1,i1,t1:integer;
-
 
   function matchwhere(arecord:integer):boolean;
   begin
@@ -1195,13 +1246,17 @@ var
     result:=false;
     LL:=0;
     sline:=trim(values);
-    err('INSERT INTO parsing values:empty');
-    if sline='' then exit;
+    if sline='' then begin
+      err('INSERT INTO parsing values:empty'); //soner moved here
+      exit;
+    end;
     repeat
       if sline[1]='''' then begin
         pp:=posstr('''',sline,2);
-        err('INSERT INTO parsing values: missing '' delimiter');
-        if pp=0 then exit;
+        if pp=0 then begin
+          err('INSERT INTO parsing values: missing '' delimiter'); //soner moved here
+          exit;
+        end;
         inc(LL);
         setlength(insertfields,LL);
         insertfields[LL-1].FieldValue:=copy(sline,2,pp-2);
@@ -1209,8 +1264,10 @@ var
         if sline='' then // ready
           pp:=0
         else begin  // must have comma
-          err('INSERT INTO parsing values:missing ,');
-          if sline[1]<>',' then exit;
+          if sline[1]<>',' then begin
+            err('INSERT INTO parsing values:missing ,'); //soner moved here
+            exit;
+          end;
           sline:=trim(copy(sline,2,maxint));
         end;
       end
@@ -1229,8 +1286,10 @@ var
           if sline='' then // ready
             pp:=0
           else begin  // must have comma
-            err('Missing , in '+sline);
-            if sline[1]<>',' then exit;
+            if sline[1]<>',' then begin
+              err('Missing , in '+sline); //soner moved here
+              exit;
+            end;
             sline:=trim(copy(sline,2,maxint));
           end;
         end;
@@ -1252,9 +1311,12 @@ var
     end
     else begin
       sline:=columns;
-      err('INSERT INTO: number of columns and values is different');
+
       split(sline,gen);
-      if gen.Count<>LL then exit; // number of columns and values not the same
+      if gen.Count<>LL then begin // number of columns and values not the same
+        err('INSERT INTO: number of columns and values is different'); //soner moved here
+        exit;
+      end;
       for ii:=0 to LL-1 do begin
         fii:=recordsets[t1].IndexOfField(gen[ii]);
         if fii=-1 then exit;
@@ -1270,20 +1332,25 @@ var
   begin
     LL:=length(insertfields);
     if LL=0 then exit;
-    for ii:=0 to LL-1 do begin
+    for ii:=0 to LL-1 do
       recordsets[t1].records[arecord].fields[insertfields[ii].FieldIndex].value:=insertfields[ii].FieldValue;
-    end;
   end;
 
 begin
   result:=0;
-  err('Missing table name in INSERT INTO component');
-  if tablename1='' then exit;
-  err('Missing values in VALUES component');
-  if values='' then exit;
+  if tablename1='' then begin
+    err('Missing table name in INSERT INTO component'); //soner moved here
+    exit;
+  end;
+  if values='' then begin
+    err('Missing values in VALUES component'); //soner moved here
+    exit;
+  end;
   t1:=IndexOfTable(tablename1);
-  err('Table '+tablename1+' not open');
-  if t1=-1 then exit;
+  if t1=-1 then begin
+    err('Table '+tablename1+' not open'); //soner moved here
+    exit;
+  end;
   if not parsevalues then exit;
   if not parsecolumns then exit;
   r1:=recordsets[t1].AddRecord;
@@ -1329,9 +1396,12 @@ var
       inc(LL);
       setlength(updatefields,LL);
       updatefields[LL-1].FieldName:=stoken;
-      err('UPDATE: can not find field '+stoken);
+
       fii:=recordsets[t1].FieldNames.IndexOf(stoken);
-      if fii=-1 then exit;
+      if fii=-1 then begin
+        err('UPDATE: can not find field '+stoken); //soner moved here
+        exit;
+      end;
       updatefields[LL-1].FieldIndex:=fii;
       if sline[1]='''' then begin // text value
         pp:=posstr('''',sline,2);
@@ -1366,9 +1436,8 @@ var
   begin
     LL:=length(updatefields);
     if LL=0 then exit;
-    for ii:=0 to LL-1 do begin
+    for ii:=0 to LL-1 do
       recordsets[t1].records[arecord].fields[updatefields[ii].FieldIndex].value:=updatefields[ii].FieldValue;
-    end;
   end;
 
   function setoutputfields:boolean;
@@ -1423,19 +1492,26 @@ var
 
 begin
   result:=0;
-  err('UPDATE: missing tablename');
-  if tablename1='' then exit;
-  err('UPDATE: missing update fields');
-  if updatelist='' then exit;
+  if tablename1='' then begin
+    err('UPDATE: missing tablename'); //soner moved here
+    exit;
+  end;
+  if updatelist='' then begin
+    err('UPDATE: missing update fields'); //soner moved here
+    exit;
+  end;
   t1:=IndexOfTable(tablename1);
-  err('UPDATE: cannot find table '+tablename1);
-  if t1=-1 then exit;
+  if t1=-1 then begin
+    err('UPDATE: cannot find table '+tablename1); //soner moved here
+    exit;
+  end;
   // table is open;
-  err('UPDATE: can not parse updatelist');
+  //soner has no effect: err('UPDATE: can not parse updatelist');
   // JV 26-Mar-2002
-  err('SELECT dev: can not set output fields');
+  //soner moved: err('SELECT dev: can not set output fields');
   if not setoutputfields then begin
     sqloutput.free;
+    err('SELECT dev: can not set output fields');
     exit;
   end;
 
@@ -1472,7 +1548,8 @@ begin
   end;
   for i:=1 to c do
     if (recordsets[i].persistent) and (recordsets[i].modified) then begin
-      fn:=Fcatalog+PathDelim+recordsets[i].name+'.txt';
+      {fn:=Fcatalog+PathDelim+recordsets[i].name+'.txt';}
+      fn:=Fcatalog+PathDelim+recordsets[i].name+'.csv'; //Changed by Zlatko Matić, 26.12.2013.
       if not fileexists(fn) then exit;
       recordsets[i].SaveToFile(fn);
       recordsets[i].modified:=false;
@@ -1517,8 +1594,11 @@ var
 begin
   result:=0;
   FError:='';
-  err('Empty SQL statement');
-  if value='' then exit;
+  //soner moved: err('Empty SQL statement');
+  if value='' then begin
+    err('Empty SQL statement'); //soner moved here for performance
+    exit;
+  end;
   value:=trim(value);
   split(value,FSQL);
   c:=FSQL.count;
@@ -1540,16 +1620,19 @@ end;
 
 function TjanSQL.SQLDirectStatement(query:TjanSQLQuery;value: string): integer;
 var
-  sline,stoken:string;
+  sline{,stoken}:string;
   tokenizer:TjanSQLTokenizer;
   b:boolean;
 begin
   query.ClearTokenList;
   result:=0;
   sline:=trim(stringreplace(value,cr,' ',[rfreplaceall]));
-  err('Empty SQL statement');
-  if sline='' then exit;
-  err('Could not tokenize: '+sline);
+  //soner moved:err('Empty SQL statement');
+  if sline='' then begin
+    err('Empty SQL statement'); //soner moved here
+    exit;
+  end;
+  //moved: err('Could not tokenize: '+sline);
   tokenizer:=TjanSQLTokenizer.create;
   tokenizer.onSubExpression:=procSubExpression;
   try
@@ -1557,30 +1640,36 @@ begin
   finally
     tokenizer.free;
   end;
-  if not b then exit;
-  err('No tokens');
-  if query.Ftokens.Count=0 then exit;
+  if not b then begin
+    err('Could not tokenize: '+sline); //soner moved here
+    exit;
+  end;
+  //soner moved: err('No tokens');
+  if query.Ftokens.Count=0 then begin
+    err('No tokens'); //soner moved here
+    exit;
+  end;
   case query.tokens[0]._operator of
-  tosqlSELECT: result:=SQLSelect(query,sline,'');
-  tosqlASSIGN: result:=SQLAssign(query,sline);
-  tosqlSAVETABLE: result:=SQLSaveTable(query,sline);
-  tosqlRELEASETABLE: result:=SQLReleaseTable(query,sline);
-  tosqlINSERT:
-    begin
-      if query.Ftokens.Count<5 then exit;
-      if query.Tokens[3]._operator=tosqlselect then
-        result:=SQLInsertSelect(query,sline)
-      else
-        result:=SQLInsert(query,sline);
-    end;
-  tosqlDELETE: result:=SQLDelete(query,sline);
-  tosqlUPDATE: result:=SQLUpdate(query,sline);
-  tosqlCREATE: result:=SQLCreate(query,sline);
-  tosqlDROP:   result:=SQLDrop(query,sline);
-  tosqlALTER:  result:=SQLAlter(query,sline);
-  tosqlCOMMIT: result:=SQLCommit(query,sline);
-  tosqlCONNECT:result:=SQLConnect(query,sline);
-  tosqlROLLBACK: result:=SQLROLLBACK(query,sline);
+    tosqlSELECT: result:=SQLSelect(query,sline,'');
+    tosqlASSIGN: result:=SQLAssign(query,sline);
+    tosqlSAVETABLE: result:=SQLSaveTable(query,sline);
+    tosqlRELEASETABLE: result:=SQLReleaseTable(query,sline);
+    tosqlINSERT:
+      begin
+        if query.Ftokens.Count<5 then exit;
+        if query.Tokens[3]._operator=tosqlselect then
+          result:=SQLInsertSelect(query,sline)
+        else
+          result:=SQLInsert(query,sline);
+      end;
+    tosqlDELETE: result:=SQLDelete(query,sline);
+    tosqlUPDATE: result:=SQLUpdate(query,sline);
+    tosqlCREATE: result:=SQLCreate(query,sline);
+    tosqlDROP:   result:=SQLDrop(query,sline);
+    tosqlALTER:  result:=SQLAlter(query,sline);
+    tosqlCOMMIT: result:=SQLCommit(query,sline);
+    tosqlCONNECT:result:=SQLConnect(query,sline);
+    tosqlROLLBACK: result:=SQLROLLBACK(query,sline);
   else
     err('Unknown SQL command');
   end;
@@ -1724,8 +1813,8 @@ var
   columns,values:string;
   p1,p2,L:integer;
 begin
-  values:='';
   result:=0;
+  values:='';
   L:=query.FTokens.count;
   if L<4 then exit;
   if (query.Tokens[0]._operator<>tosqlINSERT) or
@@ -1748,20 +1837,30 @@ begin
         columns:=columns+query.Tokens[p1].name;
     p1:=p2+1;
   end;
-  err('SQLInsert: missing VALUES');
-  if p1+2>=L then exit;
+
+  if p1+2>=L then begin
+    err('SQLInsert: missing VALUES'); //soner moved here
+    exit;
+  end;
   if query.Tokens[p1]._operator=tosqlVALUES then begin
     inc(p1);
     err('SQLInsert: missing ( after VALUES');
-    if query.Tokens[p1].tokenkind<>tkOpen then exit;
+    if query.Tokens[p1].tokenkind<>tkOpen then begin
+       //soner moved here
+      exit;
+    end;
     inc(p1);
     p2:=p1;
     while (p2<L) and (query.tokens[p2].tokenkind<>tkClose) do
       inc(p2);
-    err('SQLInsert: missing ) after VALUES');
-    if p2>=L then exit; // missing )
-    err('SQLInsert: no values after VALUES');
-    if (p1+1)=p2 then exit; // no values
+    if p2>=L then  begin // missing )
+      err('SQLInsert: missing ) after VALUES'); //soner moved here
+      exit;
+    end;
+    if (p1+1)=p2 then begin // no values
+      err('SQLInsert: no values after VALUES'); //soner moved here
+      exit;
+    end;
     for p1:=p1 to p2-1 do begin
       if query.tokens[p1]._operator=toAString then
         values:=values+''''+query.Tokens[p1].name+''''
@@ -1790,21 +1889,30 @@ begin
   grouplist:='';
   having:='';
   orderbylist:='';
-  fieldlist:='';
   tablelist:='';
+  fieldlist:='';
+  wtill:=0;
   ascending:=true;
   L:=query.FTokens.count;
-  err('SELECT: Need at least 4 token');
-  if L<4 then exit;
-  err('SELECT: missing SELECT');
-  if (query.Tokens[0]._operator<>tosqlSELECT) then exit;
+  if L<4 then begin
+    err('SELECT: Need at least 4 token');//soner moved here
+    exit;
+  end;
+  if (query.Tokens[0]._operator<>tosqlSELECT) then begin
+    err('SELECT: missing SELECT'); //soner moved here
+    exit;
+  end;
   for p2:=1 to L-1 do
     if query.Tokens[p2]._operator=tosqlFROM then break;
-  err('SELECT: missing FROM');
-  if query.Tokens[p2]._operator<>tosqlFROM then exit;
+  if query.Tokens[p2]._operator<>tosqlFROM then begin
+    err('SELECT: missing FROM'); //soner moved here
+    exit;
+  end;
   // fieldlist
-  err('SELECT: missing selected field list');
-  if p2<2 then exit;
+  if p2<2 then begin
+    err('SELECT: missing selected field list'); //soner moved here
+    exit;
+  end;
 
 // catch for any comma's in functions
   bracketopen:=0;
@@ -1857,8 +1965,10 @@ begin
   if p1<L then begin
     if query.tokens[p1]._operator=tosqlWHERE then begin
       inc(p1);
-      err('SELECT: missing expression after WHERE');
-      if (p1+1)>=L then exit;
+      if (p1+1)>=L then begin
+        err('SELECT: missing expression after WHERE'); //soner moved here
+        exit;
+      end;
       wfrom:=p1;
       while (p1<L) and (not(query.tokens[p1]._operator in [tosqlORDER,tosqlGROUP])) do begin
         if query.tokens[p1]._operator=toAstring then
@@ -1913,12 +2023,13 @@ end;
 function TjanSQL.SQLUpdate(query:TjanSQLQuery;aline: string): integer;
 var
   tablename,fieldlist,condition:string;
-  columns,values:string;
+  columns{soner nu:,values}:string;
   p1,L:integer;
   bCondition:boolean;
   brackets:integer;
 begin
   result:=0;
+  columns:='';
   fieldlist:='';
   L:=query.FTokens.count;
   if L<6 then exit;
@@ -1975,10 +2086,14 @@ var
 begin
   result:=0;
   L:=query.FTokens.count;
-  err('Expected 2 statement parts');
-  if L<2 then exit;
-  err('CONNECT TO expected');
-  if (query.Tokens[0]._operator<>tosqlCONNECT) then exit;
+  if L<2 then begin
+    err('Expected 2 statement parts'); //soner moved here
+    exit;
+  end;
+  if (query.Tokens[0]._operator<>tosqlCONNECT) then begin
+    err('CONNECT TO expected'); //soner moved here
+    exit;
+  end;
   CATALOG:=query.tokens[1].name;
   result:=opencatalog(catalog);
 end;
@@ -2052,6 +2167,7 @@ procedure TjanSQL.Sort(arecordset,From, Count: Integer;orderby:array of TjanSQLS
               	end ;
           until iL >= iR ;
   end ;
+
 begin
   if Count > 1 then
   	Sort( 0, Count - 1 ) ;
@@ -2192,7 +2308,6 @@ var
         result:=result+']['+RecordSets[sqlresult].records[arow].fields[0].value;
     result:=result+']';
   end;
-
 begin
   handled:=false;
   sqlresult:=SQLDirect(subexpression);
@@ -2306,7 +2421,6 @@ begin
   if rc=0 then exit;
   fc:=arecordset.fieldcount;
   if fc=0 then exit;
-
   // unmark all records
   for r:=0 to rc-1 do begin
     arecordset.records[r].mark:=false;
@@ -2342,6 +2456,7 @@ begin
     arecordset.records[r].mark:=false;
     arecordset.records[r].counter:=0;
   end;
+
   try
     hash:=TmwStringHashList.create(tinyhash,HashSecondaryOne,HashCompare);
     for r:=0 to rc-1 do begin
@@ -2367,8 +2482,7 @@ begin
       arecordset.DeleteRecord(r);
 end;
 
-procedure TjanSQL.SortRecordSet(arecordset, From, Count: Integer;
-  orderbylist: string; ascending: boolean);
+procedure TjanSQL.SortRecordSet(arecordset, From, Count: Integer; orderbylist: string; ascending: boolean);
 var
   i,c,fii,p:integer;
   orderby:array of TjanSQLSort;
@@ -2403,8 +2517,7 @@ begin
   sort(arecordset,from,count,orderby);
 end;
 
-function TjanSQL.SQLInsertSelect(query: TjanSQLQuery;
-  aline: string): integer;
+function TjanSQL.SQLInsertSelect(query: TjanSQLQuery; aline: string): integer;
 var
   tablename:string;
   t1,t3,L:integer;
@@ -2427,21 +2540,30 @@ begin
   if L<4 then exit;
   tablename:=query.tokens[2].name;
   t1:=indexoftable(tablename);
-  err('INSERT INTO: can not find table '+tablename);
-  if t1=0 then exit;
+
+  if t1=0 then begin
+    err('INSERT INTO: can not find table '+tablename); //soner moved here
+    exit;
+  end;
   for i:=0 to 2 do begin
     query.Tokens[0].free;
     query.FTokens.Delete(0);
   end;
   t3:=SQLSelect(query,aline,'');
   rc:=recordsets[t3].recordcount;
-  err('No result records');
-  if rc=0 then exit;
+  if rc=0 then begin
+    err('No result records'); //soner moved here
+    exit;
+  end;
   fc:=recordsets[t3].fieldcount;
-  err('No result fields');
-  if fc=0 then exit;
-  err('INSERT INTO..SELECT: no mathing fields');
-  if not havematchingfields then exit;
+  if fc=0 then begin
+    err('No result fields'); //soner moved here
+    exit;
+  end;
+  if not havematchingfields then begin
+    err('INSERT INTO..SELECT: no mathing fields'); //soner moved here
+    exit;
+  end;
   for r:=0 to rc-1 do begin
     newr:=recordsets[t1].addrecord;
     for f:=0 to fc-1 do begin
@@ -2459,7 +2581,8 @@ var
   fn:string;
 begin
   result:=true;
-  fn:=Fcatalog+PathDelim+value+'.txt';
+  {fn:=Fcatalog+PathDelim+value+'.txt';}
+  fn:=Fcatalog+PathDelim+value+'.csv'; //Changed by Zlatko Matić, 26.12.2013.
   if fileexists(fn) then exit;
   result:=false;
 end;
@@ -2471,11 +2594,15 @@ var
 begin
   result:=0;
   L:=query.FTokens.count;
-  err('SELECT: Need at least 4 token');
-  if L<4 then exit;
+  if L<4 then begin
+    err('SELECT: Need at least 4 token'); //soner moved here
+    exit;
+  end;
   tablename:=query.tokens[1].name;
-  err('SELECT: missing SELECT');
-  if (query.Tokens[2]._operator<>tosqlSELECT) then exit;
+  if (query.Tokens[2]._operator<>tosqlSELECT) then begin
+    err('SELECT: missing SELECT'); //soner moved here
+    exit;
+  end;
   TToken(query.tokens[0]).free;
   TToken(query.tokens[1]).free;
   query.FTokens.Delete(0);
@@ -2492,8 +2619,10 @@ var
 begin
   result:=0;
   L:=query.FTokens.count;
-  err('SAVE TABLE: missing tablename');
-  if L<2 then exit;
+  if L<2 then  begin
+    err('SAVE TABLE: missing tablename'); //soner moved here
+    exit;
+  end;
   tablename:=query.tokens[1].name;
   result:=SaveTable(tablename);
 end;
@@ -2504,30 +2633,36 @@ var
   idx:integer;
 begin
   result:=0;
-  err('DROP TABLE: table name missing');
-  if tablename='' then exit;
+  if tablename='' then  begin
+    err('DROP TABLE: table name missing'); //soner moved here
+    exit;
+  end;
   idx:=FRecordSets.IndexOf(tablename);
-  err('SAVE TABLE: unknown table name '+tablename);
-  if idx=-1 then exit;
+  if idx=-1 then  begin
+    err('SAVE TABLE: unknown table name '+tablename); //soner moved here
+    exit;
+  end;
   recordsets[idx+1].intermediate:=false;
   // force persistance
   recordsets[idx+1].persistent:=true;
-  fn:=Fcatalog+PathDelim+recordsets[idx+1].name+'.txt';
+  {fn:=Fcatalog+PathDelim+recordsets[idx+1].name+'.txt';}
+  fn:=Fcatalog+PathDelim+recordsets[idx+1].name+'.csv';  //Changed by Zlatko Matić, 26.12.2013.
   recordsets[idx+1].SaveToFile(fn);
   recordsets[idx+1].modified:=false;
   result:=-1;
 end;
 
-function TjanSQL.SQLReleaseTable(query: TjanSQLQuery;
-  aline: string): integer;
+function TjanSQL.SQLReleaseTable(query: TjanSQLQuery; aline: string): integer;
 var
   tablename:string;
   L:integer;
 begin
   result:=0;
   L:=query.FTokens.count;
-  err('SAVE TABLE: missing tablename');
-  if L<2 then exit;
+  if L<2 then  begin
+    err('SAVE TABLE: missing tablename'); //soner moved here
+    exit;
+  end;
   tablename:=query.tokens[1].name;
   result:=ReleaseTable(tablename);
 end;
@@ -2537,11 +2672,15 @@ var
   idx:integer;
 begin
   result:=0;
-  err('RELEASE TABLE: table name missing');
-  if tablename='' then exit;
+  if tablename='' then  begin
+    err('RELEASE TABLE: table name missing'); //soner moved here
+    exit;
+  end;
   idx:=FRecordSets.IndexOf(tablename);
-  err('RELEASE TABLE: unknown table name '+tablename);
-  if idx=-1 then exit;
+  if idx=-1 then  begin
+    err('RELEASE TABLE: unknown table name '+tablename); //soner moved here
+    exit;
+  end;
   FRecordsets.delete(idx);
   result:=-1;
 end;
@@ -2559,7 +2698,8 @@ begin
   end;
   for i:=1 to c do
     if (recordsets[i].persistent) and (recordsets[i].modified) then begin
-      fn:=Fcatalog+PathDelim+recordsets[i].name+'.txt';
+      {fn:=Fcatalog+PathDelim+recordsets[i].name+'.txt';}
+      fn:=Fcatalog+PathDelim+recordsets[i].name+'.csv'; //Changed by Zlatko Matić, 26.12.2013.
       if not fileexists(fn) then
         continue;
       recordsets[i].LoadFromFile(fn);
@@ -2741,7 +2881,6 @@ var
   gen:TStringList;
   i,c:integer;
 begin
-  result:=false;
   try
     gen:=TStringList.Create;
     gen.append(join(FFieldNames));
@@ -2750,7 +2889,7 @@ begin
       for i:=0 to c-1 do
         gen.append(Records[i].row);
     gen.SaveToFile(filename);
-    result:=true;
+    Result:=true; //soner added
   finally
     gen.free;
   end;
@@ -2847,6 +2986,7 @@ begin
   f:=TjanSQLRecordField.create;
   f.value:=value;
   FFields.Add(f);
+
 end;
 
 procedure TjanRecord.ClearFields;
@@ -2888,6 +3028,7 @@ begin
     result:=TjanSQLRecordField(FFields[index])
   else
     raise exception.create('fieldcount:'+inttostr(FFields.count));
+
 end;
 
 function TjanRecord.getrow: string;
@@ -2945,7 +3086,6 @@ procedure TjanRecord.setfield(index: integer; const Value: string);
 begin
   if (index<>-1) and (index<FFields.count) then
     TjanSQLRecordField(FFields[index]).value:=value;
-
 end;
 
 procedure TjanRecord.Setmark(const Value: boolean);

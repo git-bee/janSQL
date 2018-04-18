@@ -15,7 +15,9 @@ The Initial Developer of the Original Code is Jan Verhoeven
 Portions created by Jan Verhoeven are Copyright (C) 2002 Jan Verhoeven.
 All Rights Reserved.
 
-Contributor(s): ___________________.
+Contributor(s):
+*  Zlatko Matić (matalab@gmail.com)
+*  ___________________.
 
 Last Modified: 24-mar-2002
 Current Version: 1.0
@@ -25,6 +27,8 @@ Notes: This is a very fast expression compiler and evaluator
 Known Issues:
 
 History:
+  1.2 16.08.2011 (by Zlatko Matić)
+      - Procedures proLOJ and procROJ added to handle Sybase-like operators ('*='; '=*') for outer joins.
   1.1 26-mar-2002
       - added functions:
       - FORMAT, FORMATDATE, FORMATTIME
@@ -48,6 +52,7 @@ unit janSQLExpression2;
 interface
 
 uses
+  {$IFDEF UNIX} clocale, cwstring,{$ENDIF}
   Classes,SysUtils,Math,janSQLStrings,janSQLTokenizer;
 
 const
@@ -58,6 +63,8 @@ const
 
 type
   TVariableEvent=procedure(sender:Tobject;const VariableName:string;var VariableValue:variant;var handled:boolean) of object;
+
+  { TjanSQLExpression2 }
 
   TjanSQLExpression2=class(TObject)
   private
@@ -77,6 +84,7 @@ type
     FTokenExpression:string;
     FPC:integer;
     FonGetVariable: TVariableEvent;
+
     procedure Setsource(const Value: string);
     function Parse:boolean;
     procedure AddToken;
@@ -91,6 +99,8 @@ type
     procedure procNumber;
     procedure procVariable;
     procedure procEq;
+    procedure procLOJ; //To be used for left outer join (Sybase-like). Added by Zlatko Matić, 22.08.2011
+    procedure procROJ; //To be used for right outer join (Sybase-like). Added by Zlatko Matić, 22.08.2011
     procedure procNe;
     procedure procGt;
     procedure procGe;
@@ -213,6 +223,7 @@ begin
     TObject(FStack.items[i]).free;
   FStack.clear;
 end;
+
 {
 For each token in INPUT do the following:
 
@@ -256,11 +267,13 @@ begin
   end;
   result:=FlushStackToPostFix;
 end;
+
 {
 If the token is a closing bracket:
   - pop operators off STACK and enqueue them in OUTPUT,
   until you encounter an open bracket.
   Discard the opening bracket. If you reach the bottom of STACK without seeing an open bracket this indicates that the parentheses in the infix expression do not match, and so you should indicate an error.
+
 }
 function TjanSQLExpression2.CloseStackToPostFix: boolean;
 begin
@@ -273,6 +286,7 @@ begin
     result:=true;
   end;
 end;
+
 {
 If the token is an operator - pop operators off STACK and enqueue them in OUTPUT, until one of the following occurs:
 - STACK is empty
@@ -286,6 +300,7 @@ begin
     StackToPostFix;
   result:=true;
 end;
+
 {
 When INPUT becomes empty pop any remaining operators from STACK and enqueue them in OUTPUT. If one of the operators on STACK happened to be an open bracket, that means that its closing bracket never came, so an an error should be indicated.
 }
@@ -396,11 +411,30 @@ end;
 procedure TjanSQLExpression2.procEq;
 var
   v1,v2:variant;
-  b:boolean;
 begin
   v1:=runpop;
   v2:=runpop;
   runpush(v2=v1);
+end;
+
+procedure TjanSQLExpression2.procLOJ;
+//To be used for left outer join (Sybase-like). Added by Zlatko Matić, 22.08.2011
+var
+  v1,v2:variant;
+begin
+  v1:=runpop;
+  v2:=runpop;
+  runpush((v2=v1) or (v2<>v1)); //To be checked
+end;
+
+procedure TjanSQLExpression2.procROJ;
+//To be used for left outer join (Sybase-like). Added by Zlatko Matić, 22.08.2011
+var
+  v1,v2:variant;
+begin
+  v1:=runpop;
+  v2:=runpop;
+  runpush((v1=v2) or(v1<>v2)); //To be ckecked
 end;
 
 procedure TjanSQLExpression2.procGe;
@@ -470,7 +504,6 @@ end;
 procedure TjanSQLExpression2.procString;
 begin
   runpush(TToken(FPostFix[FPC]).value);
-
 end;
 
 procedure TjanSQLExpression2.procSubtract;
@@ -583,7 +616,6 @@ begin
     dec(SP);
     result:=Vstack[sp];
   end;
-
 end;
 
 procedure TjanSQLExpression2.runpush(value: variant);
@@ -647,6 +679,7 @@ var
 begin
   s1:=v1;
   s2:=v2;
+  result := false;
   if posstr('%',s1)=0 then begin
     result:=ansisametext(s1,s2)
   end

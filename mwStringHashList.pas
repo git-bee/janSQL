@@ -26,7 +26,7 @@ Known Issues:
 -----------------------------------------------------------------------------}
 
 {$ifdef fpc}
-   {$mode delphi} {$H+}
+   {$mode delphi}{$H+}
 {$endif}
 {$R-}
 
@@ -34,7 +34,9 @@ unit mwStringHashList;
 
 interface
 
-uses Classes, SysUtils;
+uses
+  {$IFDEF UNIX}clocale, cwstring,{$ENDIF}
+  Classes, SysUtils;
 
 var
   mwHashTable: array[#0..#255] of byte;

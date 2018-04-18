@@ -15,16 +15,21 @@ The Initial Developer of the Original Code is Jan Verhoeven
 Portions created by Jan Verhoeven are Copyright (C) 2002 Jan Verhoeven.
 All Rights Reserved.
 
-Contributor(s): ___________________.
+Contributor(s):
+               - Zlatko Matić (matalab@gmail.com)
+___________________.
 
-Last Modified: 25-mar-2002
-Current Version: 1.1
+Last Modified: 16.08.2011
+Current Version: 1.2
 
 Notes: This is a SQL oriented tokenizer.
 
 Known Issues:
 
 History:
+  1.2 16.08.2011 (by Zlatko Matić)
+      - added tosqlSELECTDISTINCT, tosqlINNERJOIN, tosqlLEFTOUTERJOIN, tosqlRIGHTOUTERJOIN,
+      tosqlFULLOUTERJOIN, tosqlCROSSJOIN, tosqlON, tosqlUSING
   1.1 25-mar-2002
       - TRUNC alias for FIX function
       - added FORMAT function
@@ -52,6 +57,7 @@ unit janSQLTokenizer;
 interface
 
 uses
+  {$IFDEF UNIX}clocale, cwstring,{$ENDIF}
   Classes,SysUtils,janSQLStrings;
 
 const
@@ -63,12 +69,15 @@ const
 type
   TSubExpressionEvent=procedure(sender:Tobject;const subexpression:string;var subexpressionValue:variant;var handled:boolean) of object;
 
-  TTokenKind=(tkKeyword,tkOperator, tkOperand, tkOpen, tkClose, tkComma,tkHash);
+  TTokenKind=(tkKeyword,tkOperator, tkOperand, tkOpen, tkClose,
+    tkComma,tkHash);
 
   TTokenOperator=(toNone,toAString,toNumber,toVariable,
      toComma,toOpen,toClose,toHash,
      tosqlCount, tosqlSum, tosqlAvg, tosqlMAX, tosqlMIN, tosqlStdDev,
      toEq,toNe,toGt,toGe,toLt,toLe,
+     toLOJ, //To be used for lef outer join. Added by Zlatko Matić, 16.08.2011
+     toROJ, //To be used for right outer join. Added by Zlatko Matić, 16.08.2011
      toAdd,toSubtract,toMultiply,toDivide,
      toAnd,toOr,toNot,toLike,
      tosqlALTER,tosqlTABLE,tosqlCOLUMN,
@@ -76,6 +85,9 @@ type
      tosqlDELETE,tosqlFROM,tosqlWHERE,
      tosqlINSERT,tosqlINTO,tosqlVALUES,
      tosqlSELECT,tosqlAS,tosqlORDER,tosqlUPDATE,
+     tosqlSELECTDISTINCT,  //Added by Zlatko Matić, 16.08.2011
+     tosqlINNERJOIN, tosqlLEFTOUTERJOIN, tosqlRIGHTOUTERJOIN, tosqlFULLOUTERJOIN, tosqlCROSSJOIN, //Added by Zlatko Matić, 16.08.2011
+     tosqlON, tosqlUSING,  //Added by Zlatko Matić, 16.08.2011
      tosqlSET,tosqlCONNECT, tosqlASSIGN,
      tosqlSAVETABLE, tosqlRELEASETABLE,
      tosqlGROUP, tosqlASC, tosqlDESC, tosqlHAVING,
@@ -145,7 +157,7 @@ type
 implementation
 
 const
-  cr = chr(13)+chr(10);
+  cr = #13#10; // chr(13)+chr(10);
 
 { TjanSQLTokenizer }
 
@@ -175,6 +187,7 @@ end;
 function TjanSQLTokenizer.GetToken: boolean;
 var
   bot:char;
+  tmpToken: String;
 
   function sqldatestring:string;
   var
@@ -195,342 +208,266 @@ var
 begin
   result:=false;
   FToken:='';
+  tmpToken := '';
   while (idx<=SL) and (FSource[idx]=' ') do inc(idx);
   if idx>SL then exit;
   bot:=FSource[idx]; // begin of token
-  if bot='''' then begin  // string
-    inc(idx);
-    while (idx<=SL) and (FSource[idx]<>'''' ) do begin
-      FToken:=FToken+Fsource[idx];
-      inc(idx);
-    end;
-    if idx>SL then exit;
-    inc(idx);
-    FTokenValue:=FToken;
-    FTokenKind:=tkOperand;
-    FTokenOperator:=toAString;
-    result:=true;
-  end
-  else if bot=',' then begin
-    FToken:=FToken+Fsource[idx];
-    inc(idx);
-    FTokenValue:=FToken;
-    FTokenKind:=tkComma;
-    FTokenOperator:=toComma;
-    result:=true;
-  end
-  else if bot='#' then begin
-    FToken:=FToken+Fsource[idx];
-    inc(idx);
-    FTokenValue:=FToken;
-    FTokenKind:=tkHash;
-    FTokenOperator:=toHash;
-    result:=true;
-  end
-  else if bot in ['A'..'Z','a'..'z'] then begin  // identifier
-    while (idx<=SL) and (FSource[idx] in identchars) do begin
-      FToken:=FToken+Fsource[idx];
-      inc(idx);
-    end;
-    if isKeyword(Ftoken) then begin
-      result:=true;
-    end
-    else if lowercase(FToken)='or' then begin
-        FTokenKind:=tkOperator;
-        FTokenLevel:=0;
-        FTokenOperator:=toOr;
-    end
-    else if lowercase(FToken)='and' then begin
-        FTokenKind:=tkOperator;
-        FTokenLevel:=0;
-        FTokenOperator:=toAnd;
-    end
-    else if lowercase(FToken)='pi' then begin
-        FTokenKind:=tkOperand;
-        FTokenValue:=pi;
-        FTokenOperator:=toNumber;
-    end
-    else if lowercase(FToken)='date' then begin
-        FTokenKind:=tkOperand;
-        FTokenValue:=sqldatestring;
-        FTokenOperator:=toAString;
-    end
-    else if lowercase(FToken)='time' then begin
-        FTokenKind:=tkOperand;
-        FTokenValue:=sqltimestring;
-        FTokenOperator:=toAString;
-    end
-    else if ISFunction(lowercase(FToken)) then begin
-    end
-    else begin
-        FTokenKind:=tkOperand;
-        FTokenOperator:=toVariable;
-    end;
-    result:=true;
-  end
-  else if bot in ['0'..'9'] then begin // number
-    while (idx<=SL) and (FSource[idx] in numberchars) do begin
-      FToken:=FToken+Fsource[idx];
-      inc(idx);
-    end;
-    FTokenKind:=tkOperand;
-    try
-      FTokenValue:=strtofloat(FToken);
-      FTokenOperator:=toNumber;
-    except
-      exit;
-    end;
-    result:=true;
-  end
-  else if bot='(' then begin
-    FToken:='(';
-    FTokenKind:=tkOpen;
-    FTokenOperator:=toOpen;
-    FtokenLevel:=1;
-    inc(idx);
-    result:=true;
-  end
-  else if bot=')' then begin
-    FToken:=')';
-    FTokenKind:=tkClose;
-    FTokenOperator:=toClose;
-    FtokenLevel:=1;
-    inc(idx);
-    result:=true;
-  end
-  else if bot in delimiters then begin
-    FToken:=FToken+Fsource[idx];
-    inc(idx);
-    FTokenKind:=tkOperator;
-    case bot of
-    '=': begin  FTokenOperator:=toEq;;FTokenLevel:=3;end;
-    '+': begin  FTokenOperator:=toAdd;FTokenLevel:=4;end;
-    '-': begin  FTokenOperator:=toSubtract;FTokenLevel:=3;end;
-    '*': begin  FTokenOperator:=toMultiply;FTokenLevel:=6;end;
-    '/': begin  FTokenOperator:=toDivide; FtokenLevel:=5;end;
-    '>': begin
-           if idx>SL then exit;
-           FTokenLevel:=3;
-           if FSource[idx]='=' then begin
-             FToken:=FToken+Fsource[idx];
-             inc(idx);
-             FTokenOperator:=toGe;
-           end
-           else
-             FTokenOperator:=toGt
+  case bot of         //// edgarrod71@gmail.com  incorporated CASE instead of IFs
+    '''': begin  // string
+          inc(idx);
+          while (idx<=SL) and (FSource[idx]<>'''' ) do begin
+            FToken:=FToken+Fsource[idx];
+            inc(idx);
+          end;
+          if idx>SL then exit;
+          inc(idx);
+          FTokenValue:=FToken;
+          FTokenKind:=tkOperand;
+          FTokenOperator:=toAString;
+          result:=true;
+      end;
+    ',': begin
+          FToken:=FToken+Fsource[idx];
+          inc(idx);
+          FTokenValue:=FToken;
+          FTokenKind:=tkComma;
+          FTokenOperator:=toComma;
+          result:=true;
+      end;
+    '#': begin
+          FToken:=FToken+Fsource[idx];
+          inc(idx);
+          FTokenValue:=FToken;
+          FTokenKind:=tkHash;
+          FTokenOperator:=toHash;
+          result:=true;
+      end;
+    'A'..'Z',
+    'a'..'z': begin  // identifier
+            while (idx<=SL) and (FSource[idx] in identchars) do begin
+              FToken:=FToken+Fsource[idx];
+              inc(idx);
+            end;
+            tmpToken := lowercase(FToken);
+            if isKeyword(Ftoken) then begin
+              result:=true;
+            end
+            else if tmpToken='or' then begin
+                FTokenKind:=tkOperator;
+                FTokenLevel:=0;
+                FTokenOperator:=toOr;
+            end
+            else if tmpToken='and' then begin
+                FTokenKind:=tkOperator;
+                FTokenLevel:=0;
+                FTokenOperator:=toAnd;
+            end
+            else if tmpToken='pi' then begin
+                FTokenKind:=tkOperand;
+                FTokenValue:=pi;
+                FTokenOperator:=toNumber;
+            end
+            else if tmpToken='date' then begin
+                FTokenKind:=tkOperand;
+                FTokenValue:=sqldatestring;
+                FTokenOperator:=toAString;
+            end
+            else if tmpToken='time' then begin
+                FTokenKind:=tkOperand;
+                FTokenValue:=sqltimestring;
+                FTokenOperator:=toAString;
+            end
+            else if ISFunction(tmpToken) then begin
+            end
+            else begin
+                FTokenKind:=tkOperand;
+                FTokenOperator:=toVariable;
+            end;
+            result:=true;
+      end;
+    '0'..'9': begin // number
+            while (idx<=SL) and (FSource[idx] in numberchars) do begin
+              FToken:=FToken+Fsource[idx];
+              inc(idx);
+            end;
+            FTokenKind:=tkOperand;
+            try
+              FTokenValue:=strtofloat(FToken);
+              FTokenOperator:=toNumber;
+            except
+              exit;
+            end;
+            result:=true;
+        end;
+    '(': begin
+            FToken:='(';
+            FTokenKind:=tkOpen;
+            FTokenOperator:=toOpen;
+            FtokenLevel:=1;
+            inc(idx);
+            result:=true;
          end;
-    '<': begin
-           if idx>SL then exit;
-           FTokenLevel:=3;
-           if FSource[idx]='=' then begin
-             FToken:=FToken+Fsource[idx];
-             inc(idx);
-             FTokenOperator:=toLe;
-           end
-           else if FSource[idx]='>' then begin
-             FToken:=FToken+Fsource[idx];
-             inc(idx);
-             FTokenOperator:=toNe;
-           end
-           else
-             FTokenOperator:=toLt;
-         end;
-    end;
-    result:=true;
-  end
+    ')': begin
+            FToken:=')';
+            FTokenKind:=tkClose;
+            FTokenOperator:=toClose;
+            FtokenLevel:=1;
+            inc(idx);
+            result:=true;
+        end;
+    '+','-',
+    '*','/',
+    ' ','=',
+    '>','<': begin   //// delimiters
+            FToken:=FToken+Fsource[idx];
+            inc(idx);
+            FTokenKind:=tkOperator;
+            case bot of
+            '=': begin  //Modified by Zlatko Matić, 16.08.2011
+                      if FSource[idx]='*' then begin
+                        FToken:=FToken+FSource[idx];
+                        inc(idx);
+                        FTokenOperator:=toROJ; //to be used for right outer join
+                        FTokenLevel:=3; //to check this level!
+                      end
+                      else begin
+                        FTokenOperator:=toEq;
+                        FTokenLevel:=3;
+                      end
+                 end;
+            '+': begin  FTokenOperator:=toAdd;
+                        FTokenLevel:=4;
+                 end;
+            '-': begin  FTokenOperator:=toSubtract;
+                        FTokenLevel:=3;
+                 end;
+            '*': begin  //Modified by Zlatko Matić, 16.08.2011
+                      if FSource[idx]='=' then begin
+                        FToken:=FToken+FSource[idx];
+                        inc(idx);
+                        FTokenOperator:=toLOJ; //to be used for left outer join
+                        FTokenLevel:=3;  //to check this level!
+                      end
+                      else begin
+                        FTokenOperator:=toMultiply;
+                        FTokenLevel:=6;
+                      end
+                 end;
+            '/': begin  FTokenOperator:=toDivide;
+                        FtokenLevel:=5;
+                 end;
+            '>': begin
+                   if idx>SL then exit;
+                   FTokenLevel:=3;
+                   if FSource[idx]='=' then begin
+                     FToken:=FToken+Fsource[idx];
+                     inc(idx);
+                     FTokenOperator:=toGe;
+                   end
+                   else
+                     FTokenOperator:=toGt
+                 end;
+            '<': begin
+                   if idx > SL then exit;
+                   FTokenLevel:=3;
+                   if FSource[idx] = '=' then begin
+                     FToken:=FToken+Fsource[idx];
+                     inc(idx);
+                     FTokenOperator:=toLe;
+                   end
+                   else if FSource[idx] = '>' then begin
+                     FToken:=FToken+Fsource[idx];
+                     inc(idx);
+                     FTokenOperator:=toNe;
+                   end
+                   else
+                     FTokenOperator:=toLt;
+                 end;
+            end;
+            result:=true;
+        end;
   else
     exit;
+  end;
 end;
 
 function TjanSQLTokenizer.IsFunction(value: string): boolean;
+var
+  vValue: string;
 begin
-  result:=false;
-  if value='sin' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=tosin;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='cos' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=tocos;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='sqr' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=tosqr;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='sqrt' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=tosqrt;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='easter' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toEaster;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='weeknumber' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toWeekNumber;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='year' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toyear;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='month' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=tomonth;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='day' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=today;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='soundex' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toSoundex;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='lower' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toLOWER;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='upper' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toUPPER;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='trim' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toTRIM;
-    FtokenLevel:=7;
-    result:=true;
-  end
+  result:=true;     //// edgarrod71@gmail.com simplified the function, more readable and shrinked bytes on the executable, not so much, but it counts..
+  vValue := lowercase(value);
+  if vValue='sin' then
+    FTokenOperator:=tosin
+  else if vValue='cos' then
+    FTokenOperator:=tocos
+  else if vValue='sqr' then
+    FTokenOperator:=tosqr
+  else if vValue='sqrt' then
+    FTokenOperator:=tosqrt
+  else if vValue='easter' then
+    FTokenOperator:=toEaster
+  else if value='weeknumber' then
+    FTokenOperator:=toWeekNumber
+  else if value='year' then
+    FTokenOperator:=toyear
+  else if value='month' then
+    FTokenOperator:=tomonth
+  else if value='day' then
+    FTokenOperator:=today
+  else if value='soundex' then
+    FTokenOperator:=toSoundex
+  else if value='lower' then
+    FTokenOperator:=toLOWER
+  else if value='upper' then
+    FTokenOperator:=toUPPER
+  else if value='trim' then
+    FTokenOperator:=toTRIM
   else if value='in' then begin
-    FtokenKind:=tkOperator;
     FTokenOperator:=tosqlIN;
-    FtokenLevel:=7;
-    result:=getsubexpression;
+    result:=boolean(getsubexpression);
   end
-  else if value='not' then begin
+  else if value='not' then
+    FTokenOperator:=toNot
+  else if value='like' then
+    FTokenOperator:=toLike
+  else if value='asnumber' then
+    FTokenOperator:=toAsNumber
+  else if value='dateadd' then
+    FTokenOperator:=todateadd
+  else if value='left' then
+    FTokenOperator:=toleft
+  else if value='right' then
+    FTokenOperator:=toRight
+  else if value='mid' then
+    FTokenOperator:=toMid
+  else if value='substr_after' then
+    FTokenOperator:=tosubstr_after
+  else if value='substr_before' then
+    FTokenOperator:=tosubstr_before
+  else if value='format' then
+    FTokenOperator:=toFormat
+  else if value='length' then
+    FTokenOperator:=toLen
+  else if (value='fix') or (value='trunc') then
+    FTokenOperator:=toFix
+  else if value='ceil' then
+    FTokenOperator:=toCeil
+  else if value='floor' then
+    FTokenOperator:=toFloor
+  else if value='isnumeric' then
+        FTokenOperator:=toIsNumeric
+  else if value='isdate' then
+        FTokenOperator:=toIsDate
+  else if value='replace' then
+        FTokenOperator:=toReplace
+  else
+        result := false;
+
+  if result then begin                //// simplifies it. edgarrod71@gmail.com
     FtokenKind:=tkOperator;
-    FTokenOperator:=toNot;
     FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='like' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toLike;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='asnumber' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toAsNumber;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='dateadd' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=todateadd;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='left' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toleft;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='right' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toRight;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='mid' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toMid;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='substr_after' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=tosubstr_after;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='substr_before' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=tosubstr_before;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='format' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toFormat;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='length' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toLen;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if (value='fix') or (value='trunc') then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toFix;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='ceil' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toCeil;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='floor' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toFloor;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='isnumeric' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toIsNumeric;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='isdate' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toIsDate;
-    FtokenLevel:=7;
-    result:=true;
-  end
-  else if value='replace' then begin
-    FtokenKind:=tkOperator;
-    FTokenOperator:=toReplace;
-    FtokenLevel:=7;
-    result:=true;
-  end
+  end;
 end;
 
 function TjanSQLTokenizer.getTokenCount: integer;
@@ -545,9 +482,17 @@ var
 begin
   result:=false;
   tmp:=uppercase(value);
-  if tmp='SELECT' then begin
-    FTokenOperator:=tosqlSELECT;
-    result:=true;
+  if tmp='SELECT' then begin //Modified by Zlatko Matić, 16.08.2011
+    //Added by Zlatko Matić, 16.08.2011
+    if uppercase(lookahead(i))='DISTINCT' then begin
+      FTokenOperator:=tosqlSELECTDISTINCT;
+      result:=true;
+      idx:=i;
+    end
+    else begin
+      FTokenOperator:=tosqlSELECT;
+      result:=true;
+    end
   end
   else if tmp='AS' then begin
     FTokenOperator:=tosqlAS;
@@ -603,6 +548,93 @@ begin
   end
   else if tmp='FROM' then begin
     FTokenOperator:=tosqlFROM;
+    result:=true;
+  end
+  //Added by Zlatko Matić, 16.08.2011
+  else if tmp='LEFT' then begin
+    if ((uppercase(lookahead(i))<>'JOIN') and (uppercase(lookahead(i))<>'OUTER')) then exit;
+    if (uppercase(lookahead(i))='OUTER') then begin
+      idx:=i;
+      if (uppercase(lookahead(i))<>'JOIN') then exit;
+      if (uppercase(lookahead(i))='JOIN') then begin
+        FTokenOperator:=tosqlLEFTOUTERJOIN;
+        result:=true;
+        idx:=i;
+      end;
+    end
+    else if (uppercase(lookahead(i))='JOIN') then begin
+      FTokenOperator:=tosqlLEFTOUTERJOIN;
+      result:=true;
+      idx:=i;
+    end;
+  end
+  //Added by Zlatko Matić, 16.08.2011
+  else if tmp='RIGHT' then begin
+    if ((uppercase(lookahead(i))<>'JOIN') and (uppercase(lookahead(i))<>'OUTER')) then exit;
+    if (uppercase(lookahead(i))='OUTER') then begin
+      idx:=i;
+      if (uppercase(lookahead(i))<>'JOIN') then exit;
+      if (uppercase(lookahead(i))='JOIN') then begin
+        FTokenOperator:=tosqlRIGHTOUTERJOIN;
+        result:=true;
+        idx:=i;
+      end;
+    end
+    else if (uppercase(lookahead(i))='JOIN') then begin
+      FTokenOperator:=tosqlRIGHTOUTERJOIN;
+      result:=true;
+      idx:=i;
+    end;
+  end
+  //Added by Zlatko Matić, 16.08.2011
+  else if tmp='FULL' then begin
+    if ((uppercase(lookahead(i))<>'JOIN') and (uppercase(lookahead(i))<>'OUTER')) then exit;
+    if (uppercase(lookahead(i))='OUTER') then begin
+      idx:=i;
+      if (uppercase(lookahead(i))<>'JOIN') then exit;
+      if (uppercase(lookahead(i))='JOIN') then begin
+        FTokenOperator:=tosqlFULLOUTERJOIN;
+        result:=true;
+        idx:=i;
+      end;
+    end
+    else if (uppercase(lookahead(i))='JOIN') then begin
+      FTokenOperator:=tosqlFULLOUTERJOIN;
+      result:=true;
+      idx:=i;
+    end;
+  end
+  //Added by Zlatko Matić, 16.08.2011
+  else if tmp='INNER' then begin
+    if (uppercase(lookahead(i))<>'JOIN') then exit;
+    if (uppercase(lookahead(i))='JOIN') then begin
+      FTokenOperator:=tosqlINNERJOIN;
+      result:=true;
+      idx:=i;
+    end;
+  end
+  //Added by Zlatko Matić, 16.08.2011
+  else if tmp='CROSS' then begin
+    if (uppercase(lookahead(i))<>'JOIN') then exit;
+    if (uppercase(lookahead(i))='JOIN') then begin
+      FTokenOperator:=tosqlCROSSJOIN;
+      result:=true;
+      idx:=i;
+    end;
+  end
+  //Added by Zlatko Matić, 16.08.2011
+  else if tmp='JOIN' then begin
+    FTokenOperator:=tosqlINNERJOIN;
+    result:=true;
+  end
+  //Added by Zlatko Matić, 16.08.2011
+  else if tmp='ON' then begin
+    FTokenOperator:=tosqlON;
+    result:=true;
+  end
+  //Added by Zlatko Matić, 16.08.2011
+  else if tmp='USING' then begin
+    FTokenOperator:=tosqlUSING;
     result:=true;
   end
   else if tmp='WHERE' then begin
@@ -699,6 +731,7 @@ begin
   while (idx<=SL) and (FSource[idx]=' ') do inc(idx);
   if idx>SL then exit;
   if FSource[idx]<>'(' then exit;
+
   inc(idx);
   brackets:=1; // keep track of open/close brackets
   while (idx<=SL) do begin
@@ -713,6 +746,7 @@ begin
     inc(idx);
   end;
   if idx>SL then exit;
+
   inc(idx);
   tmp:=trim(tmp);
   if postext('select ',tmp)=1 then begin
@@ -725,6 +759,7 @@ begin
     end;
     exit;
   end;
+
   try
     sublist:=TList.create;
     tokenizer:=TjanSQLTokenizer.create;
@@ -737,6 +772,7 @@ begin
     sublist.free;
     exit;
   end;
+
   c:=sublist.Count;
   if c>0 then begin
     tmp:='[';
@@ -748,24 +784,23 @@ begin
     end;
     tmp:=tmp+']';
   end;
+
   FtokenExpression:=tmp;
   clearsublist;
   sublist.free;
   result:=true;
 end;
 
-procedure TjanSQLTokenizer.SetonSubExpression(
-  const Value: TSubExpressionEvent);
+procedure TjanSQLTokenizer.SetonSubExpression(const Value: TSubExpressionEvent);
 begin
   FonSubExpression := Value;
 end;
 
-// some sql clauses consist of 2 wordes
-// eg GROUP BY
+// some sql clauses consist of 2 wordes eg GROUP BY
 function TjanSQLTokenizer.LookAhead(var index:integer): string;
 var
   i:integer;
-  tmp:string;
+  tmp:string = '';
 begin
   result:='';
   i:=idx;
