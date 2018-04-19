@@ -172,25 +172,25 @@ WHERE condition
 
 `condition`: The condition is an expression that must evaluate to a boolean `true` or `false`. The following operators are allowed:
 
-* Arithmetic
+* Arithmetic    
   `+ - * / ( )`
-* Logic
+* Logic    
   `and` `or`
-* comparison
+* comparison    
   `< <= = > >=`
-* string constants
+* string constants    
   e.g. `'Jan Verhoeven'`
-* numeric constans
+* numeric constans    
   e.g. `12.45`
-* fieldnames
+* fieldnames    
   e.g. `userid`, `users.userid`
-* `IN`
+* `IN`    
   e.g.
   ```sql
   userid IN (300,401,402)
   username IN ('Verhoeven','Smith')
   ```
-* `like`
+* `like`    
   e.g.
   ```sql
   username like '%Verhoeven'
