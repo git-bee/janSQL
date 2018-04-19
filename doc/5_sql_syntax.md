@@ -20,13 +20,13 @@ janSQL is case-insensitive for its keywords: you can use both `SELECT` and `sele
 
 janSQL has several non-standard SQL statements for manipulation of recordsets.
 
-* `ASSIGN TO` *[todo: make linkt to ASSIGN TO]*
-* `SAVE TABLE` *[todo: make linkt to SAVE TABLE]*
-* `RELEASE TABLE` *[todo: make linkt to RELEASE TABLE]*
+* [`ASSIGN TO`](5_sql_syntax.md#515-assign-to)
+* [`SAVE TABLE`](5_sql_syntax.md#517-save-table)
+* [`RELEASE TABLE`](5_sql_syntax.md#516-release-table)
 
 ##### Compound Queries
 
-By using the non-standard `ASSIGN TO` *[todo: make linkt to ASSIGN TO]* statement you can store the result of a select query as a named variable that can be used in subsequent queries.
+By using the non-standard [`ASSIGN TO`](5_sql_syntax.md#515-assign-to) statement you can store the result of a select query as a named variable that can be used in subsequent queries.
 
 ### 5.2 CONNECT TO
 
@@ -132,7 +132,7 @@ SELECT fieldlist FROM tablename1 [alias1], tablenameN [aliasN] WHERE condition;
 
 `fieldlist`: can be `*` for selecting all fields or `field1[,fieldN]`    
 `field`: fieldname [`AS` fieldalias]    
-`condition`: see the `WHERE` *[todo: make link to WHERE]* topic.
+`condition`: see the [`WHERE`](5_sql_syntax.md#58-where) topic.
 
 ##### Notes
 
@@ -222,7 +222,7 @@ UPDATE tablename SET updatelist [WHERE condition]
 ```
 
 `updatelist`: `field1=value1[,fieldN=valueN]`    
-`condition`: see `WHERE` *[todo: make link to WHERE]* for the optional condition.
+`condition`: see [`WHERE`](5_sql_syntax.md#58-where) for the optional condition.
 
 ### 5.10 DELETE FROM
 
@@ -233,7 +233,7 @@ Syntax:
 DELETE FROM tablename WHERE condition
 ```
 
-`condition`: see `WHERE` *[todo: make link to WHERE]* clause for the condition.
+`condition`: see [`WHERE`](5_sql_syntax.md#58-where) clause for the condition.
 
 ### 5.11 ALTER TABLE
 
@@ -340,7 +340,7 @@ When `tablename` does not exist in the catalog but was already assigned to then 
 
 Make sure that you use output field alias names when you `ASSIGN TO` using a `SELECT` with joined tables.
 
-janSQL always creates a new recordset when you execute a `SELECT` statement. The janSQLDemo program will release this recordset after the resultset is displayed. When you execute the `ASSIGN TO` the given name will be assigned to the new recordset and the recordset itself will not be released until you use `RELEASE TABLE` *[todo: make link to RELEASE TABLE]*.
+janSQL always creates a new recordset when you execute a `SELECT` statement. The janSQLDemo program will release this recordset after the resultset is displayed. When you execute the `ASSIGN TO` the given name will be assigned to the new recordset and the recordset itself will not be released until you use [`RELEASE TABLE`](5_sql_syntax.md#516-release-table).
 
 ### 5.16 RELEASE TABLE
 
