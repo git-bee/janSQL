@@ -23,7 +23,7 @@ FROM users
 ORDER BY #userid ASC, productid DESC
 ```
 
-Sample titles will be automatically added to the Samples menu.
+Sample titles will be automatically added to the `Samples` menu.
 
 ##### Hints
 
