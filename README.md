@@ -9,8 +9,11 @@ JanSQL is a fast single user SQL engine for text-based files database. It's comp
 - *text field* is an optionally double/single-quoted text.
 - *number field* is a numeric text with dot as decimal separator.
 
+### Documentations
+
+Look into the `doc` folder for the (original) janSQL [documentation](doc/index.md).    
 Look into the `db` folder for a janSQL database example.    
-Look into the `samples.txt` file for some query example.
+Look into the `samples.txt` file for some queries example.     
 
 In this repo, I also have added a simple janSQL console client program. It's mainly to test the SQL engine. Here's a brief video demo:
 
