@@ -13,8 +13,8 @@
   * 2.6 [Data Exchange](programming.md#26-data-exchange)
   * 2.7 [File Format](programming.md#27-file-format)
   * 2.8 [Handling Dates](programming.md#28-handling-dates)
-* 3 Demo Guide
-  * 3.1 Demo Introduction
+* 3 [Demo Guide](demo.md)
+  * 3.1 [Demo Introduction](demo.md#31-demo-introduction)
 * 4 Component
   * 4.1 Component introduction
   * 4.2 Installation
