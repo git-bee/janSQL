@@ -32,24 +32,24 @@
     * 4.8.1 [TjanRecordList Overview](component.md#481-tjanrecordlist-overview)
   * 4.9 [TjanSQLExpression2](component.md#49-tjansqlexpression2)
     * 4.9.1 [TjanSQLExpression2 Overview](component.md#491-tjansqlexpression2-overview)
-* 5 SQL Syntax
-  * 5.1 SQL introduction
-  * 5.2 CONNECT TO
-  * 5.3 COMMIT
-  * 5.4 CREATE TABLE
-  * 5.5 DROP TABLE
-  * 5.6 INSERT INTO
-  * 5.7 SELECT FROM
-  * 5.8 WHERE
-  * 5.9 UPDATE
-  * 5.10 DELETE FROM
-  * 5.11 ALTER TABLE
-  * 5.12 GROUP BY
-  * 5.13 HAVING
-  * 5.14 ORDER BY
-  * 5.15 ASSIGN TO
-  * 5.16 RELEASE TABLE
-  * 5.17 SAVE TABLE
+* 5 [SQL Syntax](sql_syntax.md)
+  * 5.1 [SQL introduction](sql_syntax.md#51-sql-introduction)
+  * 5.2 [CONNECT TO](sql_syntax.md#51-connect-to)
+  * 5.3 [COMMIT](sql_syntax.md#52-commit)
+  * 5.4 [CREATE TABLE](sql_syntax.md#54-create-table)
+  * 5.5 [DROP TABLE](sql_syntax.md#55-drop-table)
+  * 5.6 [INSERT INTO](sql_syntax.md#56-insert-into)
+  * 5.7 [SELECT FROM](sql_syntax.md#57-select-from)
+  * 5.8 [WHERE](sql_syntax.md#58-where)
+  * 5.9 [UPDATE](sql_syntax.md#59-update)
+  * 5.10 [DELETE FROM](sql_syntax.md#510-delete-from)
+  * 5.11 [ALTER TABLE](sql_syntax.md#511-alter-table)
+  * 5.12 [GROUP BY](sql_syntax.md#512-group-by)
+  * 5.13 [HAVING](sql_syntax.md#513-having)
+  * 5.14 [ORDER BY](sql_syntax.md#514-order-by)
+  * 5.15 [ASSIGN TO](sql_syntax.md#515-assign-to)
+  * 5.16 [RELEASE TABLE](sql_syntax.md#516-release-table)
+  * 5.17 [SAVE TABLE](sql_syntax.md#517-save-table)
 * 6 Functions
   * 6.1 Functions
   * 6.2 FORMAT function
