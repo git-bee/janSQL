@@ -4,15 +4,15 @@
   * 1.1 [janSQL](about.md#11-jansql)
   * 1.2 [New](about.md#12-new)
   * 1.3 [Updates](about.md#13-updates)
-* 2 Programming Guide
-  * 2.1 Get Started
-  * 2.2 Retrieving Data
-  * 2.3 Performance
-  * 2.4 Data Formats
-  * 2.5 Extending janSQL
-  * 2.6 Data Exchange
-  * 2.7 File Format
-  * 2.8 Handling Dates
+* 2 [Programming Guide](programming.md)
+  * 2.1 [Get Started](programming.md#get-started)
+  * 2.2 [Retrieving Data](programming.md#retrieving-data)
+  * 2.3 [Performance](programming.md#performance)
+  * 2.4 [Data Formats](programming.md#data-formats)
+  * 2.5 [Extending janSQL](programming.md#-extending-jansql)
+  * 2.6 [Data Exchange](programming.md#data-exchange)
+  * 2.7 [File Format](programming.md#file-format)
+  * 2.8 [Handling Dates](programming.md#-handling-dates)
 * 3 Demo Guide
   * 3.1 Demo Introduction
 * 4 Component
