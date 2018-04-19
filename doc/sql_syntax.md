@@ -72,7 +72,7 @@ CREATE TABLE tablename (field1,[fieldN])
 
 Example:
 ```sql
-CREATE TABLE users (userid,username,accountname, accountpassword)
+CREATE TABLE users (userid,username,accountname,accountpassword)
 ```
 
 ##### Notes
