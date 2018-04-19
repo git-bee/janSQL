@@ -273,4 +273,4 @@ A 2-digit hour followed by a 2-digit minute value, followed by a 2-digit second 
 
 **²** This limitation had been removed in this new version of janSQL.
 
-< [back to index](index.md)
+< [back to index](index.md) | [previous](about.md) | [next](demo.md) >
