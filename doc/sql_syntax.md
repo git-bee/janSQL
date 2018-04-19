@@ -379,4 +379,4 @@ SAVE TABLE mis;
 Once you have saved an intermediate table with `TABLE SAVE` you can not `ASSIGN TO` anymore.
 
 -----
-< [back to index](index.md)
+< [back to index](index.md) | [previous](component.md) | [next](functions.md) >
