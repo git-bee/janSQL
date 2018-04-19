@@ -1,5 +1,6 @@
 # Table of Contents
 
+### janSQL Help
 * 1 [About](1_about.md)
   * 1.1 [janSQL](1_about.md#11-jansql)
   * 1.2 [New](1_about.md#12-new)
