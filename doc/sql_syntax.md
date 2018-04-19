@@ -123,7 +123,7 @@ When you insert records using a sub select you must make sure that the output fi
 Allows you to select data from one or two tables.
 
 Syntax:
-``sql
+```sql
 SELECT fieldlist FROM tablename
 SELECT fieldlist FROM tablename WHERE condition
 SELECT fieldlist FROM tablename1 [alias1], tablenameN [aliasN]
@@ -140,13 +140,13 @@ When you join two or more tables you must use fully qualified field names: `tabl
 
 ```sql
 SELECT u.userid as mio, u.username as ma, p.productname as muu
-FROM users u,products p
+FROM users u, products p
 WHERE u.productid=p.productid
 ```
 
 Using a table alias can save you typing.
 ```sql
-select products.productname as product,count(users.userid) as quantity
+select products.productname as product, count(users.userid) as quantity
 from users,products
 where users.productid=products.productid
 group by product
@@ -157,7 +157,7 @@ order by product desc
 The example above shows you that in the `WHERE` clause you refer to source tables (e.g. `products.productid`) where as in the `GROUP BY`, `HAVING` and `ORDER BY` clause, you refer to the result table.
 
 Always use an aliased field name when using an aggregate function:
-``sql
+```sql
 count(users.userid) as quantity
 ```
 
