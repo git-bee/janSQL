@@ -227,7 +227,7 @@ When you have tables in other database formats, e.g. Access 2000 you can export 
 
 ##### Export from Access 2000
 
-The included programs.csv file was exported from an (out of date) Access 2000 database:
+The included `programs.csv` file was exported from an (out of date) Access 2000 database:
 * Open the Access database
 * Select the table to export
 * Select File Export - Save as Type=text
