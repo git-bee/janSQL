@@ -5,14 +5,14 @@
   * 1.2 [New](about.md#12-new)
   * 1.3 [Updates](about.md#13-updates)
 * 2 [Programming Guide](programming.md)
-  * 2.1 [Get Started](programming.md#get-started)
-  * 2.2 [Retrieving Data](programming.md#retrieving-data)
-  * 2.3 [Performance](programming.md#performance)
-  * 2.4 [Data Formats](programming.md#data-formats)
-  * 2.5 [Extending janSQL](programming.md#-extending-jansql)
-  * 2.6 [Data Exchange](programming.md#data-exchange)
-  * 2.7 [File Format](programming.md#file-format)
-  * 2.8 [Handling Dates](programming.md#-handling-dates)
+  * 2.1 [Get Started](programming.md#21-get-started)
+  * 2.2 [Retrieving Data](programming.md#22-retrieving-data)
+  * 2.3 [Performance](programming.md#23-performance)
+  * 2.4 [Data Formats](programming.md#24-data-formats)
+  * 2.5 [Extending janSQL](programming.md#25-extending-jansql)
+  * 2.6 [Data Exchange](programming.md#26-data-exchange)
+  * 2.7 [File Format](programming.md#27-file-format)
+  * 2.8 [Handling Dates](programming.md#28-handling-dates)
 * 3 Demo Guide
   * 3.1 Demo Introduction
 * 4 Component
