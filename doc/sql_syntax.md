@@ -173,51 +173,34 @@ WHERE condition
 `condition`: The condition is an expression that must evaluate to a boolean `true` or `false`. The following operators are allowed:
 
 * Arithmetic
-
-`+ - * / ( )`
-
+  `+ - * / ( )`
 * Logic
-
-`and` `or`
-
+  `and` `or`
 * comparison
-
-`< <= = > >=`
-
+  `< <= = > >=`
 * string constants
-
-e.g. `'Jan Verhoeven'`
-
+  e.g. `'Jan Verhoeven'`
 * numeric constans
-
-e.g. `12.45`
-
+  e.g. `12.45`
 * fieldnames
-
-e.g. `userid`, `users.userid`
-
+  e.g. `userid`, `users.userid`
 * `IN`
-
-e.g.
-```sql
-userid IN (300,401,402)
-username IN ('Verhoeven','Smith')
-```
-
+  e.g.
+  ```sql
+  userid IN (300,401,402)
+  username IN ('Verhoeven','Smith')
+  ```
 * `like`
+  e.g.
+  ```sql
+  username like '%Verhoeven'
+  ```
+  You can use the `%` character to match any series of characters:    
+  `'%Verhoeven'` will match Verhoeven at the end of username    
+  `'Verhoeven%'` will match Verhoeven at the beginning of username    
+  `'%Verhoeven%'` will match Verhoeven anywhere in username
 
-e.g.
-```sql
-username like '%Verhoeven'
-```
-
-You can use the `%` character to match any series of characters:    
-`'%Verhoeven'` will match Verhoeven at the end of username    
-`'Verhoeven%'` will match Verhoeven at the beginning of username    
-`'%Verhoeven%'` will match Verhoeven anywhere in username
-
-* Sub queries
-
+##### Sub queries
 You can use a subquery after the `IN` clause. Only non-correlated sub queries are allowed at the moment. A sub query must select a single field from a table. A sub query is executed at parsing time and returns a comma seperated list of values that replaces the query text in the `IN` clause. A sub query *must* be enclosed by brackets.
 
 Example:
@@ -238,10 +221,7 @@ Syntax:
 UPDATE tablename SET updatelist [WHERE condition]
 ```
 
-`updatelist`: 
-
-`field1=value1[,fieldN=valueN]`
-
+`updatelist`: `field1=value1[,fieldN=valueN]`    
 `condition`: see `WHERE` *[todo: make link to WHERE]* for the optional condition.
 
 ### 5.10 DELETE FROM
