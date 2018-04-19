@@ -63,10 +63,10 @@ janSQL was originally released on 24-Mar-2002 as version 1.0.
 
 - closed memory leaks
 - allow "unlimited" number of tables in a join
-- allow calculated updates: set field=expression
+- allow calculated updates: `set field=expression`
 - table aliases
-- StdDev aggregate function
-- RecordFields are true objects
+- `StdDev` aggregate function
+- `RecordFields` are true objects
 
 ### 1.3 Updates
 
