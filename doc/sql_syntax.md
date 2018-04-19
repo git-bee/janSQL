@@ -156,7 +156,7 @@ order by product desc
 
 The example above shows you that in the `WHERE` clause you refer to source tables (e.g. `products.productid`) where as in the `GROUP BY`, `HAVING` and `ORDER BY` clause, you refer to the result table.
 
-Always use an aliased field name when using an aggregate function:
+*Always* use an aliased field name when using an aggregate function:
 ```sql
 count(users.userid) as quantity
 ```
@@ -170,35 +170,33 @@ Syntax:
 WHERE condition
 ```
 
-##### condition
+`condition`: The condition is an expression that must evaluate to a boolean `true` or `false`. The following operators are allowed:
 
-The condition is an expression that must evaluate to a boolean true or false. The following operators are allowed:
-
-##### Arithmetic
+* Arithmetic
 
 `+ - * / ( )`
 
-##### Logic
+* Logic
 
 `and` `or`
 
-##### comparison
+* comparison
 
 `< <= = > >=`
 
-##### string constants
+* string constants
 
-e.g. 'Jan Verhoeven'
+e.g. `'Jan Verhoeven'`
 
-##### numeric constans
+* numeric constans
 
-e.g. 12.45
+e.g. `12.45`
 
-##### fieldnames
+* fieldnames
 
 e.g. `userid`, `users.userid`
 
-##### IN
+* `IN`
 
 e.g.
 ```sql
@@ -206,11 +204,11 @@ userid IN (300,401,402)
 username IN ('Verhoeven','Smith')
 ```
 
-##### Like
+* `like`
 
 e.g.
 ```sql
-username Like '%Verhoeven'
+username like '%Verhoeven'
 ```
 
 You can use the `%` character to match any series of characters:    
@@ -218,7 +216,7 @@ You can use the `%` character to match any series of characters:
 `'Verhoeven%'` will match Verhoeven at the beginning of username    
 `'%Verhoeven%'` will match Verhoeven anywhere in username
 
-##### Sub queries
+* Sub queries
 
 You can use a subquery after the `IN` clause. Only non-correlated sub queries are allowed at the moment. A sub query must select a single field from a table. A sub query is executed at parsing time and returns a comma seperated list of values that replaces the query text in the `IN` clause. A sub query *must* be enclosed by brackets.
 
@@ -229,7 +227,7 @@ select * from users where productid in (select product id from products where pr
 
 ##### Notes
 
-When using a SELECT with a join between 2 tables you must use fully qualified names (`tablename.fieldname` in every part of the query. In all other cases you must use the short form `fieldname` without the `tablename`.
+When using a `SELECT` with a join between 2 tables you *must* use fully qualified names (`tablename.fieldname` in every part of the query. In all other cases you must use the short form `fieldname` without the `tablename`.
 
 ### 5.9 UPDATE
 
@@ -240,11 +238,11 @@ Syntax:
 UPDATE tablename SET updatelist [WHERE condition]
 ```
 
-##### updatelist
+`updatelist`: 
 
-field1=value1[,fieldN=valueN]
+`field1=value1[,fieldN=valueN]`
 
-`condition` see `WHERE` *[todo: make link to WHERE]* for the optional condition.
+`condition`: see `WHERE` *[todo: make link to WHERE]* for the optional condition.
 
 ### 5.10 DELETE FROM
 
@@ -255,7 +253,7 @@ Syntax:
 DELETE FROM tablename WHERE condition
 ```
 
-`condition` see `WHERE` *[todo: make link to WHERE]* clause for the condition.
+`condition`: see `WHERE` *[todo: make link to WHERE]* clause for the condition.
 
 ### 5.11 ALTER TABLE
 
@@ -278,7 +276,7 @@ Syntax:
 group by fieldlist
 ```
 
-`fieldlist` is a comma seperated list of one or more fields that you want to grouping to be applied.
+`fieldlist`: a comma seperated list of one or more fields that you want to grouping to be applied.
 
 Example:
 ```sql
@@ -330,9 +328,7 @@ Example:
 select * from users order by #userid asc, productid desc
 ```
 
-`orderlist` is a comma seperated list of one or more order by components:
-
-`component1[,componentN]`
+`orderlist`: a comma seperated list of one or more order by components `component1[,componentN]`
 
 ##### Order component:
 
