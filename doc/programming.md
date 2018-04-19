@@ -237,11 +237,11 @@ The included programs.csv file was exported from an (out of date) Access 2000 da
 
 ### 2.7 File Format
 
-janSQL works with plain text files that have the `.txt` extension (to allow for quick opening in e.g. Notepad) and where data is separated by semi-colons. The first row of the file contains the field names.
+janSQL works with plain text files that have the `.txt` extension¹ (to allow for quick opening in e.g. Notepad) and where data is separated by semi-colons. The first row of the file contains the field names.
 
 The file format was choosen for easy export from Microsoft Access.
 
-No quotes are used around text fields. You can not use the semi-colon character in data fields as it is used as the field seperator.¹
+No quotes are used around text fields. You can not use the semi-colon character in data fields as it is used as the field seperator.²
 
 ### 2.8 Handling dates
 
@@ -269,6 +269,8 @@ In janSQL you store times as a string in the `hh:mm:ss` format:
 A 2-digit hour followed by a 2-digit minute value, followed by a 2-digit second value. Times are from '00:00:00' to '23:59:59'.
 
 -----
-¹ This limitation had been removed in this new version of janSQL.
+**¹** This is changed to `.csv` in this new version in order to make it editable using any spreadsheet applications e.g. Microsoft Excel or Google Spreadsheet or iWork Numbers.
+
+**²** This limitation had been removed in this new version of janSQL.
 
 < [back to index](index.md)
