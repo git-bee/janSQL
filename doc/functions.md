@@ -51,7 +51,7 @@ Format strings have the following form:
 * An optional precision specifier, `["." prec]`.
 * The conversion type character, `type`.
 
-The following table summarizes the possible values for type:
+The following table summarizes the possible values for `type`:
 
 ##### d
 
