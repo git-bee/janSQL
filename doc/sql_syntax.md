@@ -103,8 +103,8 @@ Allows you to insert data in a table, either row by row or from a recordset resu
 
 Syntax:
 ```sql
-INSERT INTO tablename [(column1[,column])] VALUES (field1[,fieldN])
-INSERT INTO tablename selectstatement
+INSERT INTO tablename [(column1[,column])] VALUES (field1[,fieldN]);
+INSERT INTO tablename selectstatement;
 ```
 
 Example:
@@ -124,10 +124,10 @@ Allows you to select data from one or two tables.
 
 Syntax:
 ```sql
-SELECT fieldlist FROM tablename
-SELECT fieldlist FROM tablename WHERE condition
-SELECT fieldlist FROM tablename1 [alias1], tablenameN [aliasN]
-SELECT fieldlist FROM tablename1 [alias1], tablenameN [aliasN] WHERE condition
+SELECT fieldlist FROM tablename;
+SELECT fieldlist FROM tablename WHERE condition;
+SELECT fieldlist FROM tablename1 [alias1], tablenameN [aliasN];
+SELECT fieldlist FROM tablename1 [alias1], tablenameN [aliasN] WHERE condition;
 ```
 
 `fieldlist`: can be `*` for selecting all fields or `field1[,fieldN]`    
@@ -241,8 +241,8 @@ Allows you to alter the structure of a table.
 
 Syntax:
 ```sql
-ALTER TABLE ADD COLUMN columnname
-ALTER TABLE DROP COLUMN columnname
+ALTER TABLE ADD COLUMN columnname;
+ALTER TABLE DROP COLUMN columnname;
 ```
 
 You can only add or drop *one* column at the time.
@@ -268,7 +268,7 @@ order by productid
 
 ##### Aggregate functions
 
-You can apply the count, sum, avg, max, min, stddev function to an input field. When you use these functions without a `GROUP BY` clause, the resultset will contain only one row.
+You can apply the `count`, `sum`, `avg`, `max`, `min`, `stddev` function to an input field. When you use these functions without a `GROUP BY` clause, the resultset will contain only one row.
 
 ### 5.13 HAVING
 
@@ -353,8 +353,8 @@ RELEASE TABLE tablename
 
 Example:
 ```sql
-ASSIGN TO mis SELECT * FROM users
-RELEASE TABLE mis
+ASSIGN TO mis SELECT * FROM users;
+RELEASE TABLE mis;
 ```
 
 ### 5.17 SAVE TABLE
@@ -370,8 +370,8 @@ When `tablename` is not open, an error occurs. When you save an intermediate tab
 
 Example:
 ```sql
-ASSIGN TO mis SELECT * FROM users
-SAVE TABLE mis
+ASSIGN TO mis SELECT * FROM users;
+SAVE TABLE mis;
 ```
 
 ##### Notes
