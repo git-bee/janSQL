@@ -34,4 +34,4 @@ The result of a `SELECT` statement is displayed in the stringgrid. You will noti
 janSQL allows you to execute a batch of SQL statements seperated by a semicolon. Using the `Load and Save` menu options you can load and save `.sql` files that contain multiple SQL statements.
 
 -----
-< [back to index](index.md) | [previous](programming.md) | [next](component.md) >
+< [back to index](index.md) | [previous](2_programming.md) | [next](4_component.md) >
