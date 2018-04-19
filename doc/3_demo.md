@@ -17,7 +17,7 @@ Unless you issue the `COMMIT` statement, all processing is done in-memory. This 
 janSQLDemo comes with a series of testing examples stored in the `samples.txt` file. You can add your own samples following the same format as the current samples. The sample title should be placed on a seperate line between square brackets.
 
 ```sql
-[order by]
+/* [order by] */
 SELECT *
 FROM users
 ORDER BY #userid ASC, productid DESC
