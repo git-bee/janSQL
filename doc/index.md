@@ -50,9 +50,12 @@
   * 5.15 [ASSIGN TO](sql_syntax.md#515-assign-to)
   * 5.16 [RELEASE TABLE](sql_syntax.md#516-release-table)
   * 5.17 [SAVE TABLE](sql_syntax.md#517-save-table)
-* 6 Functions
-  * 6.1 Functions
-  * 6.2 FORMAT function
-  * 6.3 Date functions
-  * 6.4 String Functions
-  * 6.5 Numeric Functions
+* 6 [Functions](functions.md)
+  * 6.1 [Functions](functions.md#61-functions)
+  * 6.2 [FORMAT function](functions.md#62-format-function)
+  * 6.3 [Date functions](functions.md#63-date-functions)
+  * 6.4 [String Functions](functions.md#64-string-functions)
+  * 6.5 [Numeric Functions](functions.md#65-numeric-functions)
+
+-----
+Source: janSQL.hlp file.
