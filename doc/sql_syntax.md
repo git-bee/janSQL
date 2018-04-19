@@ -4,7 +4,7 @@
 
 janSQL supports only a subset of standard SQL but the supported statements are sufficient for single-user desktop application.
 
-##### table updates
+##### Table updates
 
 janSQL loads tables automatically into memory when needed by a query. Any changes to tables are performed in memory. Tables are saved to disk when you use the `COMMIT` statement. The only exceptions to this are the `CREATE TABLE` statement, where the new table is saved to disk immediately and the `DROP TABLE` statement, where the table is immediately deleted from both memory and disk.
 
@@ -67,7 +67,7 @@ Creates a new table in the current catalog.
 
 Syntax:
 ```sql
-  CREATE TABLE tablename (field1,[fieldN])
+CREATE TABLE tablename (field1,[fieldN])
 ```
 
 Example:
@@ -99,7 +99,7 @@ Use with care.
 
 ### 5.6 INSERT INTO
 
-Allows you to insert data in a table, either row by row or from a recordset resulting from a SELECT.
+Allows you to insert data in a table, either row by row or from a recordset resulting from a `SELECT`.
 
 Syntax:
 ```sql
@@ -255,7 +255,7 @@ Syntax:
 DELETE FROM tablename WHERE condition
 ```
 
-`condition` see `WHERE` *[todo: make link to `WHERE`]* clause for the condition.
+`condition` see `WHERE` *[todo: make link to WHERE]* clause for the condition.
 
 ### 5.11 ALTER TABLE
 
@@ -267,7 +267,7 @@ ALTER TABLE ADD COLUMN columnname
 ALTER TABLE DROP COLUMN columnname
 ```
 
-You can only add or drop one column at the time.
+You can only add or drop *one* column at the time.
 
 ### 5.12 GROUP BY
 
@@ -332,9 +332,9 @@ select * from users order by #userid asc, productid desc
 
 `orderlist` is a comma seperated list of one or more order by components:
 
-component1[,componentN]
+`component1[,componentN]`
 
-##### ordercomponent:
+##### Order component:
 
 `[#]fieldname [ASC|DESC]`
 
@@ -400,7 +400,7 @@ SAVE TABLE mis
 
 ##### Notes
 
-Once you have saved an intermediate table with TABLE SAVE you can not ASSIGN TO anymore.
+Once you have saved an intermediate table with `TABLE SAVE` you can not `ASSIGN TO` anymore.
 
 -----
 < [back to index](index.md)
