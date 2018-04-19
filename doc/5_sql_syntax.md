@@ -376,7 +376,7 @@ SAVE TABLE mis;
 
 ##### Notes
 
-Once you have saved an intermediate table with `TABLE SAVE` you can not `ASSIGN TO` anymore.
+Once you have saved an intermediate table with `SAVE TABLE` you can not `ASSIGN TO` anymore.
 
 -----
 < [back to index](index.md) | [previous](4_component.md) | [next](6_functions.md) >
