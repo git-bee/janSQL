@@ -16,6 +16,7 @@ SELECT trunc(userid/7,2) as foo FROM users
 ##### Conversion
 
 * `fix(expression,precision)`    
+
   Returns the string presentation of (numeric) expression with precision number of decimals.
 
   ```sql
@@ -24,6 +25,7 @@ SELECT trunc(userid/7,2) as foo FROM users
   You can also use `TRUNC` i.s.o. `FIX`.
 
 * `asnumber(expression)`    
+
   Returns (number or string) expression as number. If expression is not a valid floating point number then the function returns 0.
 
 ### 6.2 FORMAT function
