@@ -15,23 +15,23 @@
   * 2.8 [Handling Dates](programming.md#28-handling-dates)
 * 3 [Demo Guide](demo.md)
   * 3.1 [Demo Introduction](demo.md#31-demo-introduction)
-* 4 Component
-  * 4.1 Component introduction
-  * 4.2 Installation
-  * 4.3 janSQLStrings
-  * 4.4 TjanSQL
-    * 4.4.1 TjanSQL Overview
-    * 4.4.2 TjanSQL Creation
-  * 4.5 TjanRecordSet
-    * 4.5.1 TjanRecordSet Overview
-  * 4.6 TjanRecord
-    * 4.6.1 TjanRecord Overview
-  * 4.7 TjanRecordSetList
-    * 4.7.1 TjanRecordSetList Overview
-  * 4.8 TjanRecordList
-    * 4.8.1 TjanRecordList Overview
-  * 4.9 TjanSQLExpression2
-    * 4.9.1 TjanSQLExpression2 Overview
+* 4 [Component](component.md)
+  * 4.1 [Component Introduction](component.md#41-component-introduction)
+  * 4.2 [Installation](component.md#42-installation)
+  * 4.3 [janSQLStrings](component.md#43-jansqlstrings)
+  * 4.4 [TjanSQL](component.md#44-tjansql)
+    * 4.4.1 [TjanSQL Overview](component.md#441-tjansql-overview)
+    * 4.4.2 [TjanSQL Creation](component.md#442-tjansql-creation)
+  * 4.5 [TjanRecordSet](component.md#45-tjanrecordset)
+    * 4.5.1 [TjanRecordSet Overview](component.md#451-tjanrecordset-overview)
+  * 4.6 [TjanRecord](component.md#46-tjanrecord)
+    * 4.6.1 [TjanRecord Overview](component.md#461-tjanrecord-overview)
+  * 4.7 [TjanRecordSetList](component.md#47-tjanrecordsetlist)
+    * 4.7.1 [TjanRecordSetList Overview](component.md#471-tjanrecordsetlist-overview)
+  * 4.8 [TjanRecordList](component.md#48-tjanrecordlist)
+    * 4.8.1 [TjanRecordList Overview](component.md#481-tjanrecordlist-overview)
+  * 4.9 [TjanSQLExpression2](component.md#49-tjansqlexpression2)
+    * 4.9.1 [TjanSQLExpression2 Overview](component.md#491-tjansqlexpression2-overview)
 * 5 SQL Syntax
   * 5.1 SQL introduction
   * 5.2 CONNECT TO
