@@ -5,7 +5,7 @@ CONNECT TO 'db'
 SELECT * FROM users
 
 [order by]
-SELECT * FROM users ORDER BY userid ASC, productid DESC
+SELECT * FROM users ORDER BY #userid ASC, productid DESC
 
 [group by]
 SELECT products.productname AS product, count(users.userid) AS quantity FROM users, products WHERE users.productid=products.productid GROUP BY product ORDER BY product DESC
