@@ -2,7 +2,7 @@
 
 ### 4.1 Component introduction
 
-TjanSQL is a Delphi freeware component with source code released under the MOZILLA PUBLIC LICENSE Version 1.1. In fact TjanSQL is not a component but derived from TObject.
+TjanSQL is a Delphi freeware component with source code released under the MOZILLA PUBLIC LICENSE Version 1.1. In fact `TjanSQL` is not a component but derived from `TObject`.
 
 ### 4.2 Installation
 
@@ -24,12 +24,13 @@ A small unit with usefull string routines.
 
 #### 4.4.1 TjanSQL overview
 
-TjanSQL was designed for ease of use. With just a few methods you can manage a database and display selected data:
+`TjanSQL` was designed for ease of use. With just a few methods you can manage a database and display selected data:
 
 ```pascal
 function SQLDirect(value:string):integer;
 function ReleaseRecordset(arecordset:integer):boolean;
 function Error:string;
+
 property RecordSets[index:integer]:TjanRecordSet read getrecordset;
 property RecordSetCount:integer read getRecordSetCount;
 ```
