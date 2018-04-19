@@ -196,9 +196,9 @@ WHERE condition
   username like '%Verhoeven'
   ```
   You can use the `%` character to match any series of characters:    
-  `'%Verhoeven'` will match Verhoeven at the end of username    
-  `'Verhoeven%'` will match Verhoeven at the beginning of username    
-  `'%Verhoeven%'` will match Verhoeven anywhere in username
+  `'%Verhoeven'` will match `Verhoeven` at the end of username.    
+  `'Verhoeven%'` will match `Verhoeven` at the beginning of username.    
+  `'%Verhoeven%'` will match `Verhoeven` anywhere in username.
 
 ##### Sub queries
 You can use a subquery after the `IN` clause. Only non-correlated sub queries are allowed at the moment. A sub query must select a single field from a table. A sub query is executed at parsing time and returns a comma seperated list of values that replaces the query text in the `IN` clause. A sub query *must* be enclosed by brackets.
