@@ -12,11 +12,11 @@ Run this simple demo program that allows you to execute SQL statements and see t
 
 ##### Connect
 
-Before you can access data you must connect to a database. In janSQL a database is a folder. Using the `CONNECT TO` *[todo make link]* statement you can connect to a database. Just click the `Execute` button to execute the statement(s) in the SQL editor. When everything goes right you will see `OK` in the `message` box next to the `Execute` button.
+Before you can access data you must connect to a database. In janSQL a database is a folder. Using the [`CONNECT TO`](5_sql_syntax.md#51-connect-to) statement you can connect to a database. Just click the `Execute` button to execute the statement(s) in the SQL editor. When everything goes right you will see `OK` in the `message` box next to the `Execute` button.
 
 ##### Commit
 
-Nothing is saved to disk until you issue the `COMMIT` *[todo make link]* statement. Not only does this make janSQL very fast but it also allows you to play with it without altering any disk based data.
+Nothing is saved to disk until you issue the [`COMMIT`](5_sql_syntax.md#52-commit) statement. Not only does this make janSQL very fast but it also allows you to play with it without altering any disk based data.
 
 ##### Select
 
@@ -30,7 +30,7 @@ In the table grid you will see all records from the `users` table, with the fiel
 
 ##### More SQL
 
-For other SQL instruction see the SQL Syntax *[todo make link]* chapter where all supported SQL statements are explained.
+For other SQL instruction see the [SQL Syntax](5_sql_syntax.md) chapter where all supported SQL statements are explained.
 
 ##### Multiple SQL statements
 
