@@ -130,8 +130,8 @@ SELECT fieldlist FROM tablename1 [alias1], tablenameN [aliasN]
 SELECT fieldlist FROM tablename1 [alias1], tablenameN [aliasN] WHERE condition
 ```
 
-`fieldlist`: can be * for selecting all fields or field1[,fieldN]
-`field`: fieldname [AS fieldalias]
+`fieldlist`: can be `*` for selecting all fields or `field1[,fieldN]`    
+`field`: fieldname [`AS` fieldalias]    
 `condition`: see the `WHERE` *[todo: make link to WHERE]* topic.
 
 ##### Notes
