@@ -176,11 +176,11 @@ WHERE condition
   `+ - * / ( )`
 * Logic    
   `and` `or`
-* comparison    
+* Comparison    
   `< <= = > >=`
-* string constants    
+* String constants    
   e.g. `'Jan Verhoeven'`
-* numeric constans    
+* Numeric constans    
   e.g. `12.45`
 * fieldnames    
   e.g. `userid`, `users.userid`
