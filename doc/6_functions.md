@@ -202,4 +202,4 @@ Returns the lowest integer greater than or equal to (numeric) `expression`.
 Returns the the highest integer less than or equal to (numeric) `expression`.
 
 -----
-< [back to index](index.md) | [previous](sql_syntax.md) | end.
+< [back to index](index.md) | [previous](5_sql_syntax.md) | END.
