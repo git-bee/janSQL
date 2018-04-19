@@ -116,4 +116,4 @@ The evaluator uses only a single data type: `variant`, and uses a stack for calc
 When you assign an expression it is tokenized using the `TjanSQLTokenizer` tokenizer.
 
 -----
-< [back to index](index.md)
+< [back to index](index.md) | [previous](demo.md) | [next](sql_syntax.md) >
