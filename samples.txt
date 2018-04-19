@@ -11,7 +11,7 @@ SELECT * FROM users ORDER BY #userid ASC, productid DESC
 SELECT products.productname AS product, count(users.userid) AS quantity FROM users, products WHERE users.productid=products.productid GROUP BY product ORDER BY product DESC
 
 [having]
-SELECT products.productname AS product, count(users.userid) AS quantity FROM users, products WHERE users.productid=products.productid GROUP BY product HAVING quantity>10 ORDER BY product DESC
+SELECT products.productname AS product, count(users.userid) AS quantity FROM users, products WHERE users.productid=products.productid GROUP BY product HAVING quantity > 10 ORDER BY product DESC
 
 [join 2 tables]
 SELECT users.userid, users.username, products.productname FROM users, products WHERE users.productid=products.productid
