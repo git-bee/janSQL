@@ -11,7 +11,7 @@ JanSQL is a fast single user SQL engine for text-based files database. It's comp
 
 ### Documentations
 
-- Look into the `doc` folder for the (original) janSQL [help](doc/index.md).
+- Look into the `doc` folder for the (original) janSQL [help](doc/index.md). \[[.pdf](doc/janSQL_hlp.pdf)\]
 - Look into the `db` folder for a janSQL database example.
 - Look into the `samples.txt` file for some queries example.
 
