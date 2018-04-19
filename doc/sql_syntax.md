@@ -182,7 +182,7 @@ WHERE condition
   e.g. `'Jan Verhoeven'`
 * Numeric constans    
   e.g. `12.45`
-* fieldnames    
+* Field names    
   e.g. `userid`, `users.userid`
 * `IN`    
   e.g.
