@@ -362,7 +362,7 @@ RELEASE TABLE mis
 Allows you to save any open table, including intermediate tables, to a file. This is a non-standard SQL statement.
 
 Syntax:
-``sql
+```sql
 SAVE TABLE tablename
 ```
 
