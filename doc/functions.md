@@ -200,3 +200,6 @@ Returns the lowest integer greater than or equal to (numeric) `expression`.
 ##### floor(expression)
 
 Returns the the highest integer less than or equal to (numeric) `expression`.
+
+-----
+< [back to index](index.md)
