@@ -14,7 +14,7 @@ Please the supplied source files in any folder (e.g. `components\jansoft\janSQL`
 * janSQLStrings.pas
 * mwStringHashList.pas
 
-Then you create the component as described in TjanSQL creation. *[Todo: make here link to TjanSQL creation]*
+Then you create the component as described in [TjanSQL Creation](4_component.md#442-tjansql-creation).
 
 ### 4.3 janSQLStrings
 
@@ -43,7 +43,7 @@ Will process a `value` that consists of one or more semi-colon `;` seperated SQL
 
 Read-only property to retrieve a reference to a recordset. In janSQL, all collection (records, fields) are 0-based, except for the `recordsets` collection which is 1-based. In case of a select statement, `SQLDirect` will return the `index` of the generated result set.
 
-See Retrieving Data *[todo: make here link to retrieving data]* for example code.
+See [Retrieving Data](2_programming.md#22-retrieving-data) for example code.
 
 ##### ReleaseRecordset
 
